@@ -76,6 +76,12 @@ class PunctualTranslation_Admin {
 				
 				<table class="form-table">
 					<tr valign="top">
+						<th scope="row"><?php _e('Original language name', 'punctual-translation'); ?></th>
+						<td>
+							<input type="text" name="punctual-translation[original_lang_name]" value="<?php echo esc_attr($current_options['original_lang_name']); ?>" />
+						</td>
+					</tr>
+					<tr valign="top">
 						<th scope="row"><?php _e('Post types translatable :', 'punctual-translation'); ?></th>
 						<td>
 							<?php

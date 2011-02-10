@@ -7,9 +7,10 @@
  */
 function PunctualTranslation_Install() {
 	$current_options = array();
-	$current_options['cpt'] 	= array('post',' page');
-	$current_options['mode'] 	= 'manual';
+	$current_options['cpt'] = array('post',' page');
+	$current_options['mode'] = 'manual';
 	$current_options['rewrite'] = 'classic';
+	$current_options['original_lang_name'] = __('English', 'punctual-translation');
 	add_option( SPTRANS_OPTIONS_NAME, $current_options );
 
 	// Remove old role if needed to reset the caps
