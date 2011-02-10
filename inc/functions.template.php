@@ -7,7 +7,25 @@
  * @author Amaury Balmer
  */
 function switch_to_language( $language_slug = null ) {
+	global $post, $punctual_translation, $translation_flag, $original_object;
 	
+	$lang = get_query_var(SPTRANS_QVAR);
+	if ( empty($language_slug) && empty($lang) ) {
+		$translation_flag = false;
+		return false;
+	} elseif( empty($language_slug) && !empty($lang) ) {
+		$language_slug = $lang;
+	}
+	
+	if ( !empty($language_slug) ) {
+		$translation = $punctual_translation['client']->getTranslateObject( $post->ID, $language_slug, 'object' );
+		if ( $translation != false ) {
+			$original_object = $post;
+			$translation_flag = true;
+			$post = $translation;
+			setup_postdata($post);
+		}
+	}
 }
 
 /**
@@ -17,7 +35,13 @@ function switch_to_language( $language_slug = null ) {
  * @author Amaury Balmer
  */
 function restore_original_language() {
+	global $post, $translation_flag, $original_object;
 	
+	if ( $translation_flag === true ) {
+		$post = $original_object;
+		setup_postdata($post);
+		$translation_flag = false;
+	}
 }
 
 /**
