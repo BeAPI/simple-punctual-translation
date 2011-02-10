@@ -28,6 +28,7 @@ class PunctualTranslation_Admin {
 		
 		// Ajax
 		add_action( 'wp_ajax_' . 'load_original_content', array(&$this, 'ajaxBuildSelect' ) );
+		add_action( 'wp_ajax_' . 'test_once_translation', array(&$this, 'testUnicity' ) );
 	}
 	
 	/**
@@ -64,8 +65,12 @@ class PunctualTranslation_Admin {
 			( $hook_suffix == 'post.php' && isset($_GET['post']) && $post->post_type == $this->post_type ) ||
 			( $hook_suffix == 'edit.php' && $_GET['post_type'] == $this->post_type ) 
 		) {
-			wp_enqueue_style ( 'admin-translation', SPTRANS_URL.'/ressources/admin.css', array(), SPTRANS_VERSION, 'all' );
-			wp_enqueue_script( 'admin-translation', SPTRANS_URL.'/ressources/admin.js', array('jquery'), SPTRANS_VERSION );
+			wp_enqueue_style  ( 'admin-translation', SPTRANS_URL.'/ressources/admin.css', array(), SPTRANS_VERSION, 'all' );
+			wp_enqueue_script ( 'admin-translation', SPTRANS_URL.'/ressources/admin.js', array('jquery'), SPTRANS_VERSION );
+			wp_localize_script( 'admin-translation', 'translationL10n', array(
+				'successText' => __('This translation is unique, fine...', 'punctual-translation'),
+				'errorText' => __('Duplicate translation detected !', 'punctual-translation')
+			) );
 		}
 	}
 	
@@ -310,6 +315,43 @@ class PunctualTranslation_Admin {
 				foreach( $q_all_content->posts as $object ) {
 					echo '<option value="'.$object->ID.'" '.selected( $object->ID, (int) $_REQUEST['current_value'], false ).'>'.$object->ID.' - '.$object->post_title.'</option>' . "\n"; 
 				}
+			}
+		}
+	}
+	
+	/**
+	 * Test if the translation exist already for a content, exclude current ID...
+	 *
+	 * @return void
+	 * @author Amaury Balmer
+	 */
+	function testUnicity() {
+		if ( !isset($_REQUEST['parent_id']) || !isset($_REQUEST['current_id']) || !isset($_REQUEST['current_value']) ) {
+			status_header ('404');
+			die();
+		} else {
+			$test_flag = false;
+			
+			// Get translations for original content
+			$q_translations = new WP_Query( array('post_type' => 'translation', 'post_status' => 'any', 'post_parent' => (int) $_REQUEST['parent_id'], 'post__not_in' => array((int) $_REQUEST['current_id']) ) );
+			if ( $q_translations->have_posts() ) {
+				foreach( $q_translations->posts as $translation ) { // Test language of theses translations
+					$language = get_the_terms( $translation->ID, 'language' );
+					if ( $language == false )
+						continue;
+					$language = current($language); // Take only the first...
+					
+					if ( $language->term_id == (int) $_REQUEST['current_value'] ) {
+						$test_flag = true;
+						break;
+					}
+				}
+			}
+			
+			if ( $test_flag == true ) {
+				die('ko');
+			} else {
+				die('ok');
 			}
 		}
 	}

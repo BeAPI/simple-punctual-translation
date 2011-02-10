@@ -12,6 +12,11 @@ jQuery(document).ready(function() {
 	jQuery('select#original_post_type_js').live('change', function() {
 		loadPostParentAjax( jQuery(this).val(), 0 );
 	});
+	
+	// Ajax test for help usage on admin
+	jQuery('select#language_translation').live('change', function() {
+		checkUnicityTranslation( jQuery(this).val() );
+	});
 });
 
 function loadPostParentAjax( post_type, current_value ) {
@@ -26,4 +31,20 @@ function loadPostParentAjax( post_type, current_value ) {
 
 function syncSelectParentBox() {
 	jQuery("select#parent_id").val( jQuery("select#post_parent_js").val() );
+	checkUnicityTranslation( jQuery("select#language_translation").val() );
+}
+
+function checkUnicityTranslation( current_value ) {
+	jQuery.ajax({
+		type: "POST",
+		url: ajaxurl,
+		data: "action=test_once_translation&parent_id="+jQuery("select#parent_id").val()+"&current_id="+jQuery("input#post_ID").val()+"&current_value="+current_value,
+		success: function(msg) {
+			if ( msg != 'ok' ) {
+				jQuery("#language_duplicate_ajax").html("<div class='error'><p>"+translationL10n.errorText+"</p></div>");
+			} else {
+				jQuery("#language_duplicate_ajax").html("<div class='updated'><p>"+translationL10n.successText+"</p></div>");
+			}
+		}
+	});
 }
