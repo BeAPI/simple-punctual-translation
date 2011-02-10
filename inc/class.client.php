@@ -175,7 +175,7 @@ class PunctualTranslation_Client {
 	 * @author Amaury Balmer
 	 */
 	function addQueryVar( $wpvar ) {
-		$wpvar[] = 'lang';
+		$wpvar[] = SPTRANS_QVAR;
 		return $wpvar;
 	}
 	
@@ -189,10 +189,10 @@ class PunctualTranslation_Client {
 	function parseQuery( $query ) {
 		$query->is_translation = false;
 		
-		if ( isset($query->query_vars['lang']) && $query->is_singular == true ) {
-			$language = get_term_by( 'slug', $query->query_vars['lang'], 'language' );
+		if ( isset($query->query_vars[SPTRANS_QVAR]) && $query->is_singular == true ) {
+			$language = get_term_by( 'slug', $query->query_vars[SPTRANS_QVAR], 'language' );
 			if ( $language == false ) {
-				wp_redirect( remove_query_arg( array('lang'), stripslashes( $_SERVER['REQUEST_URI'] ) ) ); // TODO: manage case with rewriting method
+				wp_redirect( remove_query_arg( array(SPTRANS_QVAR), stripslashes( $_SERVER['REQUEST_URI'] ) ) ); // TODO: manage case with rewriting method
 				exit();
 			}
 			
@@ -215,7 +215,7 @@ class PunctualTranslation_Client {
 		remove_filter('the_posts', array(&$this, 'translateQueryPosts'), 10, 2 );
 		
 		foreach( $objects as $object ) {
-			$translation = $this->getTranslateObject( $object->ID, $query->query_vars['lang'], 'object' );
+			$translation = $this->getTranslateObject( $object->ID, $query->query_vars[SPTRANS_QVAR], 'object' );
 			if ( $translation == false )
 				continue;
 				

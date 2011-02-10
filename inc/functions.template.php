@@ -38,7 +38,7 @@ function get_translation_permalink( $post_id, $language_code = '' ) {
 		$link = str_replace( home_url('/'), '', $link );
 		$link =  home_url('/') . $language_code . '/' . $link;
 	} else {
-		$link = add_query_arg( array('lang' => $language_code), get_permalink( $post_id ) );
+		$link = add_query_arg( array(SPTRANS_QVAR => $language_code), get_permalink( $post_id ) );
 	}
 	
 	return apply_filters( 'get_translation_permalink', $link, $post_id, $language_code );
