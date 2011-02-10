@@ -40,7 +40,7 @@ define( 'SPTRANS_URL', plugins_url('', __FILE__) );
 define( 'SPTRANS_DIR', dirname(__FILE__) );
 
 require( SPTRANS_DIR . '/inc/functions.plugin.php');
-require( SPTRANS_DIR . '/inc/functions.tpl.php');
+require( SPTRANS_DIR . '/inc/functions.template.php');
 require( SPTRANS_DIR . '/inc/class.client.php');
 require( SPTRANS_DIR . '/inc/class.widget.php');
 

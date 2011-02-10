@@ -278,5 +278,41 @@ class PunctualTranslation_Client {
 		
 		return $object_id;
 	}
+	
+	/**
+	 * Get the object translateds for a specific object
+	 *
+	 * @param string $parent_id 
+	 * @param string $fields 
+	 * @return void
+	 * @author Amaury Balmer
+	 */
+	function getTranslateObjects( $parent_id = 0, $fields = 'objects' ) {
+		global $wpdb;
+		
+		// Choose data to get
+		switch($fields) {
+			case 'terms_objects' :
+				$fields = 't.*';
+				break;
+			case 'objects' :
+				$fields = 'p.*, t.*';
+				break;
+			default :
+			case 'ids' :
+				$fields = 'p.ID, t.term_id';
+				break;
+		}
+		
+		$objects = $wpdb->get_results("SELECT {$fields}
+			FROM $wpdb->term_relationships AS tr 
+			INNER JOIN $wpdb->term_taxonomy AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id 
+			INNER JOIN $wpdb->terms AS t ON tt.term_id = t.term_id 
+			INNER JOIN $wpdb->posts AS p ON tr.object_id = p.ID 
+			WHERE tt.taxonomy = 'language'
+			AND p.post_parent = {$parent_id}");
+			
+		return $objects;
+	}
 }
 ?>
