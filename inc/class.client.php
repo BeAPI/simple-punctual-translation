@@ -85,6 +85,7 @@ class PunctualTranslation_Client {
 	
 	/**
 	 * Display correct message when user update object
+	 * TODO: change preview and view link for translated version of a content
 	 *
 	 * @param array $messages 
 	 * @return array
