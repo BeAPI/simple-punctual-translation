@@ -17,7 +17,7 @@ class PunctualTranslation_Admin {
 		
 		// Metadatas
 		add_action( 'add_meta_boxes', array(&$this, 'registerMetaBox') );
-		//add_action( 'save_post', array(&$this, 'saveDatasMetaBoxes'), 10, 2 );
+		add_action( 'save_post', array(&$this, 'saveDatasMetaBoxes'), 10, 2 );
 		
 		// Listing
 		add_filter( 'manage_posts_columns', array( &$this, 'addColumns'), 10 ,2 );
@@ -86,8 +86,18 @@ class PunctualTranslation_Admin {
 		
 		if ( isset($_POST['_meta_translation']) && $_POST['_meta_translation'] == 'true' ) {
 			// Nothing actually
-		} elseif ( isset($_POST['_meta_original_translation']) && $_POST['_meta_original_translation'] == 'true' ) {
-			// Nothing actualluy too.
+		}
+		
+		if ( isset($_POST['_meta_original_translation']) && $_POST['_meta_original_translation'] == 'true' ) {
+			// Nothing actually too.
+		}
+		
+		if( isset($_POST['_meta_language']) && $_POST['_meta_language'] == 'true' ) {
+			if ( isset($_POST['language_translation']) && !empty($_POST['language_translation']) ) {
+				wp_set_object_terms($object_id, array( (int) $_POST['language_translation'] ), 'language', false);
+			} else {
+				wp_delete_object_term_relationships( $object_id, array('language') );
+			}
 		}
 	}
 	
@@ -101,8 +111,32 @@ class PunctualTranslation_Admin {
 	function registerMetaBox( $post_type ) {
 		if ( $post_type != $this->post_type )
 			add_meta_box($post_type.'-translation', __('Translations', 'punctual-translation'), array(&$this, 'MetaboxTranslation'), $post_type, 'side', 'core');
-		else
+		else {
+			remove_meta_box( 'tagsdiv-language', $post_type, 'side' );
+			add_meta_box($post_type.'-language', __('Language', 'punctual-translation'), array(&$this, 'MetaboxLanguageTaxo'), $post_type, 'side', 'core');
 			add_meta_box($post_type.'-translation', __('Original content', 'punctual-translation'), array(&$this, 'MetaboxOriginalContent'), $post_type, 'side', 'core');
+		}
+	}
+	
+	/**
+	 * List languages available
+	 *
+	 * @param object $post 
+	 * @return void
+	 * @author Amaury Balmer
+	 */
+	function MetaboxLanguageTaxo( $post ) {
+		$current_terms 		= wp_get_object_terms($post->ID, 'language', array('fields' => 'ids'));
+		$current_term_id 	= current($current_terms);
+		
+		echo '<select name="language_translation" id="language_translation">' . "\n";
+			foreach( get_terms( 'language', array('hide_empty' => false) ) as $term ) {
+				echo '<option value="'.$term->term_id.'" '.selected( $term->term_id, $current_term_id, false ).'>'.$term->name.'</option>' . "\n";
+			}
+		echo '</select>' . "\n";
+		echo '<div id="language_duplicate_ajax"></div>' . "\n";
+		
+		echo '<input type="hidden" name="_meta_language" value="true" />';
 	}
 	
 	/**
@@ -210,6 +244,7 @@ class PunctualTranslation_Admin {
 	function addColumns( $defaults, $post_type ) {
 		if ( $post_type == $this->post_type ) {
 			$defaults['original-translation'] = __('Original', 'punctual-translation');
+			$defaults['taxo-language'] = __('Language', 'punctual-translation');
 		}
 		
 		return $defaults;
@@ -228,6 +263,19 @@ class PunctualTranslation_Admin {
 			case 'original-translation':
 				$translation = get_post($object_id);
 				echo '<a href="'.get_edit_post_link($translation->post_parent).'">'.get_the_title($translation->post_parent).'</a>';
+				break;
+			case 'taxo-language':
+				$translation = get_post($object_id);
+				$terms = get_the_terms($object_id, 'language');
+				if ( !empty( $terms ) ) {
+					$output = array();
+					foreach ( $terms as $term ) {
+						$output[] = "<a href='edit-tags.php?action=edit&taxonomy=language&post_type=".$translation->post_type."&tag_ID=$term->term_id'> " . esc_html(sanitize_term_field('name', $term->name, $term->term_id, 'language', 'display')) . "</a>";
+					}
+					echo join( ', ', $output );
+				} else {
+					//_e('No term.','simple-case');
+				}
 				break;
 		}
 	}
