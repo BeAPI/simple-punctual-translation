@@ -28,7 +28,93 @@ class PunctualTranslation_Admin {
 		
 		// Ajax
 		add_action( 'wp_ajax_' . 'load_original_content', array(&$this, 'ajaxBuildSelect' ) );
-		add_action( 'wp_ajax_' . 'test_once_translation', array(&$this, 'testUnicity' ) );
+		add_action( 'wp_ajax_' . 'test_once_translation', array(&$this, 'ajaxTestUnicity' ) );
+		
+		// Menu setting
+		add_action( 'admin_menu', array(&$this, 'addMenu') );
+		add_action( 'admin_init', array(&$this, 'registerSettings') );
+	}
+	
+	/**
+	 * Add menu for settings plugin
+	 *
+	 * @return void
+	 * @author Amaury Balmer
+	 */
+	function addMenu() {
+		add_options_page( __('Simple Punctual Translation', 'punctual-translation'), __('Translations', 'punctual-translation'), 'manage_options', 'punctual-translation-settings', array(&$this, 'pageSettings') );
+	}
+	
+	/**
+	 * Register setting on options API
+	 *
+	 * @return void
+	 * @author Amaury Balmer
+	 */
+	function registerSettings() {
+		register_setting( 'punctual-translation-settings-group', SPTRANS_OPTIONS_NAME );
+	}
+	
+	/**
+	 * Make HTML for settings
+	 *
+	 * @return void
+	 * @author Amaury Balmer
+	 */
+	function pageSettings() {
+		$current_options = get_option( SPTRANS_OPTIONS_NAME );
+		?>
+		<div class="wrap">
+			<h2><?php _e('Simple Punctual Translation', 'punctual-translation'); ?></h2>
+			
+			<form method="post" action="<?php echo admin_url('options.php'); ?>">
+				<?php settings_fields( 'punctual-translation-settings-group' ); ?>
+				
+				<table class="form-table">
+					<tr valign="top">
+						<th scope="row"><?php _e('Post types translatable :', 'punctual-translation'); ?></th>
+						<td>
+							<?php
+							foreach( get_post_types( array('public' => true), 'objects' ) as $cpt ) {
+								echo '<label style="display:block;"><input type="checkbox" name="punctual-translation[cpt][]" value="'.$cpt->name.'" '.checked( in_array($cpt->name, (array)$current_options['cpt']), true, false ).' /> '.$cpt->labels->name.'</label>' . "\n";
+							}
+							?>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row"><?php _e('Translation mode :', 'punctual-translation'); ?></th>
+						<td>
+							<label style="display:block;">
+								<input type="radio" name="punctual-translation[mode]" value="manual" <?php checked( 'manual', $current_options['mode'] ); ?> /> 
+								<?php _e('Manual', 'punctual-translation'); ?>
+							</label>
+							<label style="display:block;">
+								<input type="radio" name="punctual-translation[mode]" value="auto" <?php checked( 'auto', $current_options['mode'] ); ?> /> 
+								<?php _e('Auto (singular only)', 'punctual-translation'); ?>
+							</label>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row"><?php _e('Address mode :', 'punctual-translation'); ?></th>
+						<td>
+							<label style="display:block;">
+								<input type="radio" name="punctual-translation[rewrite]" value="classic" <?php checked( 'classic', $current_options['rewrite'] ); ?> /> 
+								<?php _e('Classic, adding "?lang=fr" for the URL.', 'punctual-translation'); ?>
+							</label>
+							<label style="display:block;">
+								<input type="radio" name="punctual-translation[rewrite]" value="rewrite" <?php checked( 'rewrite', $current_options['rewrite'] ); ?> /> 
+								<?php _e('Rewrite, prefix URL with "/fr/my-content/"', 'punctual-translation'); ?>
+							</label>
+						</td>
+					</tr>
+				</table>
+				
+				<p class="submit">
+					<input type="submit" class="button-primary" value="<?php _e('Save Changes', 'punctual-translation') ?>" />
+				</p>
+			</form>
+		</div>
+		<?php
 	}
 	
 	/**
@@ -114,9 +200,13 @@ class PunctualTranslation_Admin {
 	 * @author Amaury Balmer
 	 */
 	function registerMetaBox( $post_type ) {
-		if ( $post_type != $this->post_type )
+		if ( !current_user_can('edit_translation') )
+			return false;
+			
+		$current_options = get_option( SPTRANS_OPTIONS_NAME );
+		if ( $post_type != $this->post_type && in_array($post_type, (array) $current_options['cpt']) == true ) {
 			add_meta_box($post_type.'-translation', __('Translations', 'punctual-translation'), array(&$this, 'MetaboxTranslation'), $post_type, 'side', 'core');
-		else {
+		} elseif ( $post_type == $this->post_type ) {
 			remove_meta_box( 'tagsdiv-language', $post_type, 'side' );
 			add_meta_box($post_type.'-language', __('Language', 'punctual-translation'), array(&$this, 'MetaboxLanguageTaxo'), $post_type, 'side', 'core');
 			add_meta_box($post_type.'-translation', __('Original content', 'punctual-translation'), array(&$this, 'MetaboxOriginalContent'), $post_type, 'side', 'core');
@@ -195,7 +285,10 @@ class PunctualTranslation_Admin {
 				<br />
 				<select name="original_post_type_js" id="original_post_type_js">
 					<?php
-					foreach( get_post_types( array('public' => true), 'objects' ) as $cpt ) {
+					$current_options = get_option( SPTRANS_OPTIONS_NAME );
+					foreach( (array) $current_options['cpt'] as $cpt ) {
+						$cpt = get_post_type_object( $cpt );
+						
 						$selected = '';
 						if ( $current_parent != false )
 							$selected = selected( $cpt->name, $current_parent->post_type, false );
@@ -247,7 +340,7 @@ class PunctualTranslation_Admin {
 	 * @author Amaury Balmer
 	 */
 	function addColumns( $defaults, $post_type ) {
-		if ( $post_type == $this->post_type ) {
+		if ( $post_type == $this->post_type && current_user_can('edit_translation') ) {
 			$defaults['original-translation'] = __('Original', 'punctual-translation');
 			$defaults['taxo-language'] = __('Language', 'punctual-translation');
 		}
@@ -294,7 +387,8 @@ class PunctualTranslation_Admin {
 	 * @author Amaury Balmer
 	 */
 	function extendActionsList( $actions, $object ) {
-		if ( $object->post_type != $this->post_type )
+		$current_options = get_option( SPTRANS_OPTIONS_NAME );
+		if ( $object->post_type != $this->post_type && current_user_can('edit_translation') && in_array($object->post_type, (array) $current_options['cpt']) == true )
 			$actions['translate'] = '<a href="'.admin_url('post-new.php?post_type=translation&post_parent='.$object->ID).'">'.__('Translate', 'punctual-translation').'</a>' . "\n";
 		return $actions;
 	}
@@ -325,7 +419,7 @@ class PunctualTranslation_Admin {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function testUnicity() {
+	function ajaxTestUnicity() {
 		if ( !isset($_REQUEST['parent_id']) || !isset($_REQUEST['current_id']) || !isset($_REQUEST['current_value']) ) {
 			status_header ('404');
 			die();

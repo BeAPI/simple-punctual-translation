@@ -13,8 +13,15 @@ class PunctualTranslation_Client {
 	 * @author Amaury Balmer
 	 */
 	function PunctualTranslation_Client() {
+		// CPT, Taxo
 		add_action( 'init', array(&$this, 'Register_CPT'), 1 );
 		
+		// Rewrite and WP Query
+		add_action( 'generate_rewrite_rules', array(&$this, 'createRewriteRules') );
+		add_action( 'parse_query', array(&$this, 'parseQuery') );
+		add_filter( 'query_vars', array(&$this, 'addQueryVar') );
+		
+		// Admin messages
 		add_filter( 'post_updated_messages', array(&$this, 'updateMessages') );
 		add_action( 'contextual_help', array(&$this, 'helpText'), 10, 3 );
 	}
@@ -130,6 +137,139 @@ class PunctualTranslation_Client {
 		}
 		
 		return $contextual_help;
+	}
+	
+	/**
+	 * Depending settings of plugin, clone all rules for prefix with language slug.
+	 *
+	 * @param object $wp_rewrite 
+	 * @return void
+	 * @author Amaury Balmer
+	 */
+	function createRewriteRules( $wp_rewrite ) {
+		// TODO: All duplication
+		if ( 1 == 0 ) {
+			$new_rules = array(
+				'annuaire/'.QUERY_VAR_LETTER.'/([^/]+)?$' 									=> 'index.php?post_type=annuaire&'.QUERY_VAR_LETTER.'='. $wp_rewrite->preg_index( 1 ),
+				'annuaire/'.QUERY_VAR_LETTER.'/([^/]+)/page/?([0-9]{1,})/?$' 				=> 'index.php?post_type=annuaire&'.QUERY_VAR_LETTER.'='. $wp_rewrite->preg_index( 1 ).'&paged='.$wp_rewrite->preg_index(2),
+				'annuaire/'.QUERY_VAR_LETTER.'/([^/]+)/feed/(feed|rdf|rss|rss2|atom)/?$' 	=> 'index.php?post_type=annuaire&'.QUERY_VAR_LETTER.'='. $wp_rewrite->preg_index( 1 ).'&feed='.$wp_rewrite->preg_index(2),
+				'annuaire/'.QUERY_VAR_LETTER.'/([^/]+)/(feed|rdf|rss|rss2|atom)/?$' 		=> 'index.php?post_type=annuaire&'.QUERY_VAR_LETTER.'='. $wp_rewrite->preg_index( 1 ).'&feed='.$wp_rewrite->preg_index(2)
+			);
+
+			$wp_rewrite->rules = $new_rules + $wp_rewrite->rules;
+		}
+	}
+	
+	/**
+	 * Add query word "lang"
+	 *
+	 * @param array $wpvar 
+	 * @return array
+	 * @author Amaury Balmer
+	 */
+	function addQueryVar( $wpvar ) {
+		$wpvar[] = 'lang';
+		return $wpvar;
+	}
+	
+	/**
+	 * Analyse query for detect if lang var isset or not.
+	 *
+	 * @param object $query 
+	 * @return void
+	 * @author Amaury Balmer
+	 */
+	function parseQuery( $query ) {
+		$query->is_translation = false;
+		
+		if ( isset($query->query_vars['lang']) && $query->is_singular == true ) {
+			$language = get_term_by( 'slug', $query->query_vars['lang'], 'language' );
+			if ( $language == false ) {
+				wp_redirect( remove_query_arg( array('lang'), stripslashes( $_SERVER['REQUEST_URI'] ) ) ); // TODO: manage case with rewriting method
+				exit();
+			}
+			
+			$query->is_translation = true;
+			
+			$current_options = get_option( SPTRANS_OPTIONS_NAME );
+			if ( $current_options['mode'] == 'auto' )
+				add_filter('the_posts', array(&$this, 'translateQueryPosts'), 10, 2 );
+		}
+	}
+	
+	/**
+	 * Translate objects content in array, do that after main query SQL.
+	 *
+	 * @param array $objects 
+	 * @return array
+	 * @author Amaury Balmer
+	 */
+	function translateQueryPosts( $objects, $query ) {
+		remove_filter('the_posts', array(&$this, 'translateQueryPosts'), 10, 2 );
+		
+		foreach( $objects as $object ) {
+			$translation = $this->getTranslateObject( $object->ID, $query->query_vars['lang'], 'object' );
+			if ( $translation == false )
+				continue;
+				
+			$object = $this->translateObject( $object, $translation );
+		}
+		
+		return $objects;
+	}
+	
+	/**
+	 * Translate some fields from original
+	 *
+	 * @param object $original 
+	 * @param object $translation 
+	 * @return object
+	 * @author Amaury Balmer
+	 */
+	function translateObject( $original, $translation ) {
+		$translated = $original;
+		
+		$translated->post_title 	= $translation->post_title;
+		$translated->post_content 	= $translation->post_content;
+		$translated->post_excerpt 	= $translation->post_excerpt;
+		
+		return apply_filters( 'translate_object', $translated, $original, $translation );
+	}
+	
+	/**
+	 * Get the object translated for a specific object, precise lang.
+	 *
+	 * @param string $parent_id 
+	 * @param string $language 
+	 * @param string $fields 
+	 * @return void
+	 * @author Amaury Balmer
+	 */
+	function getTranslateObject( $parent_id = 0, $language = '', $fields = 'object' ) {
+		global $wpdb;
+		
+		// Get language term_id
+		$language = get_term_by( 'slug', $language, 'language' );
+		if ( $language == false )
+			return false;
+			
+		// Get object_id translated
+		$object_id = $wpdb->get_var("SELECT tr.object_id 
+			FROM $wpdb->term_relationships AS tr 
+			INNER JOIN $wpdb->term_taxonomy AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id 
+			INNER JOIN $wpdb->posts AS p ON tr.object_id = p.ID 
+			WHERE tt.taxonomy = 'language'
+			AND tt.term_id = {$language->term_id}
+			AND p.post_parent = {$parent_id}
+			LIMIT 1");
+			
+		if ( $object_id == false )
+			return false;
+			
+		if ( $fields == 'object' )
+			return get_post( $object_id );
+		
+		return $object_id;
 	}
 }
 ?>

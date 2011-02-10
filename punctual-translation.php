@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Simple Punctual Translation
-Version: 0.2
+Version: 0.3
 Plugin URI: http://www.beapi.fr
 Description: A small plugin for WordPress that allow to translate any post type in another languages. This plugin is not usable out of the box. It's require some changes on your theme.
 Author: Be API
@@ -18,9 +18,8 @@ TODO :
 			- Scan les posts dont le post parent est égal au post actuel OU post parent actuel et de type traduction.
 			- Affiche “Ce contenu est également disponible dans les lanugues suivantes : XXX - YYYY - ZZZ”
 			- Paramètre facultatif pour recevoir un tableau PHP avec les URL des pages filles/soeurs
-
+		
 		Règle de réécriture
-			Si slug de langue dans URL, vérifier si un post parent existe avec la metakey lang qui vaut le slug passé dans l’URL
 			Gestion avec et sans règle de réécriture (/en ou ?lang=en)
 		
 	Admin		
@@ -34,7 +33,6 @@ TODO :
 	Widget
 	
 	Javascript
-		Ajax lors de la création d'une traduction pour savoir si une traduction existe déjà
 		Ajax, ou plutot Modal Windows lorsqu'on a affiché une traduction, ouvrir une popup pour savoir si on veut automatiquement charger les articles dans la langue de son choix.
 */
 
@@ -45,6 +43,7 @@ define( 'SPTRANS_URL', plugins_url('', __FILE__) );
 define( 'SPTRANS_DIR', dirname(__FILE__) );
 
 require( SPTRANS_DIR . '/inc/functions.plugin.php');
+require( SPTRANS_DIR . '/inc/functions.tpl.php');
 require( SPTRANS_DIR . '/inc/class.client.php');
 require( SPTRANS_DIR . '/inc/class.widget.php');
 

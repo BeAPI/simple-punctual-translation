@@ -1,11 +1,17 @@
 <?php
 /**
- * Function call by WordPress when plugin is actived
+ * Function call by WordPress when plugin is actived, options + role
  *
  * @return void
  * @author Amaury Balmer
  */
 function PunctualTranslation_Install() {
+	$current_options = array();
+	$current_options['cpt'] 	= array('post',' page');
+	$current_options['mode'] 	= 'manual';
+	$current_options['rewrite'] = 'classic';
+	add_option( SPTRANS_OPTIONS_NAME, $current_options );
+
 	// Remove old role if needed to reset the caps
 	remove_role( 'translator' );
 	
@@ -68,6 +74,7 @@ function PunctualTranslation_Translation_Cap( &$role ) {
  * @author Amaury Balmer
  */
 function PunctualTranslation_Uninstall() {
+	delete_option( SPTRANS_OPTIONS_NAME );
 	remove_role( 'translator' );
 }
 ?>
