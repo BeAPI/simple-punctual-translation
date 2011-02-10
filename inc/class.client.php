@@ -16,8 +16,12 @@ class PunctualTranslation_Client {
 		// CPT, Taxo
 		add_action( 'init', array(&$this, 'Register_CPT'), 1 );
 		
-		// Rewrite and WP Query
-		add_action( 'generate_rewrite_rules', array(&$this, 'createRewriteRules') );
+		// Rewrite
+		$current_options = get_option( SPTRANS_OPTIONS_NAME );
+		if ( $current_options['rewrite'] == 'rewrite' )
+			add_action( 'generate_rewrite_rules', array(&$this, 'createRewriteRules'), 99 );
+			
+		// WP_Query
 		add_action( 'parse_query', array(&$this, 'parseQuery') );
 		add_filter( 'query_vars', array(&$this, 'addQueryVar') );
 		
@@ -147,15 +151,18 @@ class PunctualTranslation_Client {
 	 * @author Amaury Balmer
 	 */
 	function createRewriteRules( $wp_rewrite ) {
-		// TODO: All duplication
-		if ( 1 == 0 ) {
-			$new_rules = array(
-				'annuaire/'.QUERY_VAR_LETTER.'/([^/]+)?$' 									=> 'index.php?post_type=annuaire&'.QUERY_VAR_LETTER.'='. $wp_rewrite->preg_index( 1 ),
-				'annuaire/'.QUERY_VAR_LETTER.'/([^/]+)/page/?([0-9]{1,})/?$' 				=> 'index.php?post_type=annuaire&'.QUERY_VAR_LETTER.'='. $wp_rewrite->preg_index( 1 ).'&paged='.$wp_rewrite->preg_index(2),
-				'annuaire/'.QUERY_VAR_LETTER.'/([^/]+)/feed/(feed|rdf|rss|rss2|atom)/?$' 	=> 'index.php?post_type=annuaire&'.QUERY_VAR_LETTER.'='. $wp_rewrite->preg_index( 1 ).'&feed='.$wp_rewrite->preg_index(2),
-				'annuaire/'.QUERY_VAR_LETTER.'/([^/]+)/(feed|rdf|rss|rss2|atom)/?$' 		=> 'index.php?post_type=annuaire&'.QUERY_VAR_LETTER.'='. $wp_rewrite->preg_index( 1 ).'&feed='.$wp_rewrite->preg_index(2)
-			);
-
+		$base_rules = $wp_rewrite->rules;
+		foreach( get_terms( 'language', array('hide_empty' => true) ) as $term ) {
+			$new_rules = array();
+			
+			// Prefix with term slug
+			foreach( $base_rules as $key => $value ) {
+				$key = $term->slug . '/' . $key;
+				
+				$new_rules[$key] = $value . '&lang=' . $term->slug;
+			}
+			
+			// Merge with WP rules
 			$wp_rewrite->rules = $new_rules + $wp_rewrite->rules;
 		}
 	}

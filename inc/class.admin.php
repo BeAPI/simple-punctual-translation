@@ -33,6 +33,10 @@ class PunctualTranslation_Admin {
 		// Menu setting
 		add_action( 'admin_menu', array(&$this, 'addMenu') );
 		add_action( 'admin_init', array(&$this, 'registerSettings') );
+		
+		// Rewriting
+		add_action( 'created_' . 'language', array(&$this, 'resetRewritingRules') );
+		add_action( 'edited_'  . 'language', array(&$this, 'resetRewritingRules') );
 	}
 	
 	/**
@@ -448,6 +452,16 @@ class PunctualTranslation_Admin {
 				die('ok');
 			}
 		}
+	}
+	
+	/**
+	 * Flush rewriting rules when a term language is insert or update for build correct URLs.
+	 *
+	 * @return void
+	 * @author Amaury Balmer
+	 */
+	function resetRewritingRules() {
+		flush_rewrite_rules( false );
 	}
 }
 ?>

@@ -19,9 +19,6 @@ TODO :
 			- Affiche “Ce contenu est également disponible dans les lanugues suivantes : XXX - YYYY - ZZZ”
 			- Paramètre facultatif pour recevoir un tableau PHP avec les URL des pages filles/soeurs
 		
-		Règle de réécriture
-			Gestion avec et sans règle de réécriture (/en ou ?lang=en)
-		
 	Admin		
 		Suppression d'un contenu :
 			Supprimer automatiquement tous les articles fils de type traduction
