@@ -68,20 +68,29 @@ function get_post_available_languages( $object_id = 0 ) {
 function get_the_post_available_languages( $before = '', $sep = ', ', $after = '' ) {
 	global $post;
 	
+	// Get available languages
 	$languages = get_post_available_languages( $post->ID );
 	if ( is_wp_error($languages) || empty($languages) )
 		return '';
 
+	// Build array with all lang
 	$links = array();
 	foreach ( $languages as $language ) {
 		$link = get_translation_permalink( $post->post_parent, $language->slug );
 		if ( is_wp_error( $link ) )
 			return '';
-		$links[] = '<a href="' . $link . '" rel="alternate" hreflang="'.$language->slug.'">' . $language->name . '</a>';
+		$links[$language->slug] = '<a href="' . $link . '" rel="alternate" hreflang="'.$language->slug.'">' . $language->name . '</a>';
 	}
-
+	
+	// Add original lang if a lang is already load, and delete current lang display
+	$lang = get_query_var(SPTRANS_QVAR);
+	if( !empty($lang) ) {
+		$current_options = get_option( SPTRANS_OPTIONS_NAME );
+		$links['original'] = '<a href="' . get_permalink( $post->post_parent) . '" rel="alternate" hreflang="'.esc_attr($current_options['original_lang_name']).'">' . esc_html($current_options['original_lang_name']) . '</a>';
+		unset($links[$lang]);
+	}
+	
 	$links = apply_filters( "get_the_post_available_languages", $links );
-
 	return $before . join( $sep, $links ) . $after;
 }
 
