@@ -26,7 +26,7 @@ class PunctualTranslation_Client {
 	 * @author Amaury Balmer
 	 */
 	function Register_CPT() {
-		register_post_type( 'punctual-translation', array(
+		register_post_type( 'translation', array(
 			'labels' 				=> array(
 				'name' => _x('Translations', 'punctual-translation post type general name', 'punctual-translation'),
 				'singular_name' => _x('Translation', 'punctual-translation post type singular name', 'punctual-translation'),
@@ -49,7 +49,7 @@ class PunctualTranslation_Client {
 			'map_meta_cap'			=> true,
 			'hierarchical' 			=> false,
 			'rewrite' 				=> false,
-			'query_var' 			=> 'punctual-translation',
+			'query_var' 			=> 'translation',
 			'supports' 				=> array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'revisions' ),
 			'taxonomies' 			=> array(),
 			'show_ui' 				=> true,
