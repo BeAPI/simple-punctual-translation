@@ -269,10 +269,10 @@ class PunctualTranslation_Client {
 			FROM $wpdb->term_relationships AS tr 
 			INNER JOIN $wpdb->term_taxonomy AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id 
 			INNER JOIN $wpdb->posts AS p ON tr.object_id = p.ID 
-			WHERE tt.taxonomy = ".SPTRANS_TAXO."
+			WHERE tt.taxonomy = '".SPTRANS_TAXO."'
 			AND tt.term_id = {$language->term_id}
 			AND p.post_parent = {$parent_id}
-			AND p.post_type = ".SPTRANS_CPT."
+			AND p.post_type = '".SPTRANS_CPT."'
 			LIMIT 1");
 			
 		if ( $object_id == false )
@@ -314,9 +314,9 @@ class PunctualTranslation_Client {
 			INNER JOIN $wpdb->term_taxonomy AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id 
 			INNER JOIN $wpdb->terms AS t ON tt.term_id = t.term_id 
 			INNER JOIN $wpdb->posts AS p ON tr.object_id = p.ID 
-			WHERE tt.taxonomy = ".SPTRANS_TAXO."
+			WHERE tt.taxonomy = '".SPTRANS_TAXO."'
 			AND p.post_parent = {$parent_id}
-			AND p.post_type = ".SPTRANS_CPT."
+			AND p.post_type = '".SPTRANS_CPT."'
 			AND p.post_status = 'publish'");
 			
 		return $objects;
