@@ -21,7 +21,7 @@ define( 'SPTRANS_OPTIONS_NAME', 'punctual-translation' ); // Option name for sav
 
 define( 'SPTRANS_QVAR', 		'lang' );
 define( 'SPTRANS_CPT', 			'translation' );
-define( 'SPTRANS_TAXO', 		'language' );
+define( 'SPTRANS_TAXO', 		'_language' );
 
 define( 'SPTRANS_URL', 			plugins_url('', __FILE__) );
 define( 'SPTRANS_DIR', 			dirname(__FILE__) );

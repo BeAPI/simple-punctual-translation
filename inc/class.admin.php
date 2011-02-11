@@ -14,7 +14,7 @@ class PunctualTranslation_Admin {
 		add_action( 'admin_enqueue_scripts', array(&$this, 'addRessources') );
 		
 		// Metadatas
-		add_action( 'add_meta_boxes', array(&$this, 'registerMetaBox') );
+		add_action( 'add_meta_boxes', array(&$this, 'registerMetaBox'), 999 );
 		add_action( 'save_post', array(&$this, 'saveDatasMetaBoxes'), 10, 2 );
 		
 		// Listing
@@ -123,7 +123,9 @@ class PunctualTranslation_Admin {
 		if ( $post_type != SPTRANS_CPT && in_array($post_type, (array) $current_options['cpt']) == true ) {
 			add_meta_box($post_type.'-translation', __('Translations', 'punctual-translation'), array(&$this, 'MetaboxTranslation'), $post_type, 'side', 'core');
 		} elseif ( $post_type == SPTRANS_CPT ) {
+			remove_meta_box( SPTRANS_TAXO.'div', $post_type, 'side' );
 			remove_meta_box( 'tagsdiv-'.SPTRANS_TAXO, $post_type, 'side' );
+			
 			add_meta_box($post_type.'-language', __('Language', 'punctual-translation'), array(&$this, 'MetaboxLanguageTaxo'), $post_type, 'side', 'core');
 			add_meta_box($post_type.'-translation', __('Original content', 'punctual-translation'), array(&$this, 'MetaboxOriginalContent'), $post_type, 'side', 'core');
 		}

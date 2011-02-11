@@ -72,7 +72,8 @@ function get_translation_permalink( $post_id, $language_code = '' ) {
 		return get_permalink( $post_id );
 	
 	$permalink = get_option('permalink_structure');
-	if ( '' != $permalink ) { // Rewriting enabled ?
+	$current_options = get_option( SPTRANS_OPTIONS_NAME );
+	if ( '' != $permalink && $current_options['rewrite'] == 'rewrite' ) { // Rewriting enabled ?
 		$link = get_permalink( $post_id );
 		$link = str_replace( home_url('/'), '', $link );
 		$link =  home_url('/') . $language_code . '/' . $link;
@@ -115,7 +116,7 @@ function get_the_post_available_languages( $before = '', $sep = ', ', $after = '
 	// Build array with all lang
 	$links = array();
 	foreach ( $languages as $language ) {
-		$link = get_translation_permalink( $post->post_parent, $language->slug );
+		$link = get_translation_permalink( $post->ID, $language->slug );
 		if ( is_wp_error( $link ) )
 			return '';
 		$links[$language->slug] = '<a href="' . $link . '" rel="alternate" hreflang="'.$language->slug.'">' . $language->name . '</a>';
