@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Simple Punctual Translation
-Version: 0.3
+Version: 0.4
 Plugin URI: http://www.beapi.fr
 Description: A small plugin for WordPress that allow to translate any post type in another languages. This plugin is not usable out of the box. It's require some changes on your theme.
 Author: Be API
@@ -10,11 +10,7 @@ Author URI: http://www.beapi.fr
 Copyright 2010 - BeAPI Team (technique@beapi.fr)
 
 TODO :
-	Client
-		Checkbox pour afficher ou non automatiquement dans the_content les langues disponibles
-			Dropdown list pour choix entre affichage dropdown ou list
-		
-	Admin		
+	Admin
 		Suppression d'un contenu :
 			Supprimer automatiquement tous les articles fils de type traduction
 		
