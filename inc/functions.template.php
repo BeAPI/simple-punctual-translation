@@ -9,6 +9,12 @@
 function switch_to_language( $language_slug = null ) {
 	global $post, $punctual_translation, $translation_flag, $original_object;
 	
+	// Restore original language before switch again...
+	if ( $translation_flag === true ) {
+		restore_original_language();
+	}
+	
+	// Param or Query lang ?
 	$lang = get_query_var(SPTRANS_QVAR);
 	if ( empty($language_slug) && empty($lang) ) {
 		$translation_flag = false;
@@ -17,6 +23,7 @@ function switch_to_language( $language_slug = null ) {
 		$language_slug = $lang;
 	}
 	
+	// All is fine ? try to switch
 	if ( !empty($language_slug) ) {
 		$translation = $punctual_translation['client']->getTranslateObject( $post->ID, $language_slug, 'object' );
 		if ( $translation != false ) {
@@ -24,14 +31,18 @@ function switch_to_language( $language_slug = null ) {
 			$translation_flag = true;
 			$post = $translation;
 			setup_postdata($post);
+			
+			return true;
 		}
 	}
+	
+	return false;
 }
 
 /**
  * Restore the original language of the blog
  *
- * @return void
+ * @return boolean
  * @author Amaury Balmer
  */
 function restore_original_language() {
@@ -41,7 +52,11 @@ function restore_original_language() {
 		$post = $original_object;
 		setup_postdata($post);
 		$translation_flag = false;
+		
+		return true;
 	}
+	
+	return false;
 }
 
 /**
@@ -77,7 +92,7 @@ function get_translation_permalink( $post_id, $language_code = '' ) {
  */
 function get_post_available_languages( $object_id = 0 ) {
 	global $punctual_translation;
-	return $punctual_translation['client']->getTranslateObjects( $object_id, 'objects' );
+	return $punctual_translation['client']->getTranslateObjects( $object_id, 'terms_objects' );
 }
 
 /**

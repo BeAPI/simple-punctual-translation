@@ -14,11 +14,6 @@ TODO :
 		Checkbox pour afficher ou non automatiquement dans the_content les langues disponibles
 			Dropdown list pour choix entre affichage dropdown ou list
 		
-		Création d’une fonction d’affichage des langues disponibles
-			- Scan les posts dont le post parent est égal au post actuel OU post parent actuel et de type traduction.
-			- Affiche “Ce contenu est également disponible dans les lanugues suivantes : XXX - YYYY - ZZZ”
-			- Paramètre facultatif pour recevoir un tableau PHP avec les URL des pages filles/soeurs
-		
 	Admin		
 		Suppression d'un contenu :
 			Supprimer automatiquement tous les articles fils de type traduction
