@@ -76,6 +76,7 @@ class PunctualTranslation_Client {
 		
 		register_taxonomy( 'language', 'translation', array(
 			'hierarchical' => false,
+			'update_count_callback' => '_update_post_term_count',
 			'labels' => array(
 				'name' => __( 'Languages' ),
 				'singular_name' => __( 'Language' ),

@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Simple Punctual Translation
-Version: 0.4
+Version: 1.0
 Plugin URI: http://www.beapi.fr
 Description: A small plugin for WordPress that allow to translate any post type in another languages. This plugin is not usable out of the box. It's require some changes on your theme.
 Author: Be API
@@ -11,17 +11,8 @@ Copyright 2010 - BeAPI Team (technique@beapi.fr)
 
 TODO :
 	Admin
-		Suppression d'un contenu :
-			Supprimer automatiquement tous les articles fils de type traduction
-		
-		Suppresion d'une langue
-			-> Implique de supprimer toutes les traductions liées ?
-				=> Case à cocher ?
-		
 	Widget
-	
 	Javascript
-		Ajax, ou plutot Modal Windows lorsqu'on a affiché une traduction, ouvrir une popup pour savoir si on veut automatiquement charger les articles dans la langue de son choix.
 */
 
 define( 'SPTRANS_VERSION', '1.0' );
