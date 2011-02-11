@@ -15,12 +15,16 @@ TODO :
 	Javascript
 */
 
-define( 'SPTRANS_VERSION', '1.0' );
-define( 'SPTRANS_FOLDER', 'punctual-translation' );
+define( 'SPTRANS_VERSION', 		'1.0' );
+define( 'SPTRANS_FOLDER', 		'punctual-translation' );
 define( 'SPTRANS_OPTIONS_NAME', 'punctual-translation' ); // Option name for save settings
-define( 'SPTRANS_QVAR', 'lang' );
-define( 'SPTRANS_URL', plugins_url('', __FILE__) );
-define( 'SPTRANS_DIR', dirname(__FILE__) );
+
+define( 'SPTRANS_QVAR', 		'lang' );
+define( 'SPTRANS_CPT', 			'translation' );
+define( 'SPTRANS_TAXO', 		'language' );
+
+define( 'SPTRANS_URL', 			plugins_url('', __FILE__) );
+define( 'SPTRANS_DIR', 			dirname(__FILE__) );
 
 require( SPTRANS_DIR . '/inc/functions.plugin.php');
 require( SPTRANS_DIR . '/inc/functions.template.php');

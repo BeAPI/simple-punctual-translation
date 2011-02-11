@@ -51,21 +51,21 @@ function PunctualTranslation_Install() {
  * @author Amaury Balmer
  */
 function PunctualTranslation_Translation_Cap( &$role ) {
-	$role->add_cap( 'edit_translation' );
-	$role->add_cap( 'read_translation' );
-	$role->add_cap( 'delete_translation' );
+	$role->add_cap( 'edit_' . SPTRANS_CPT );
+	$role->add_cap( 'read_' . SPTRANS_CPT );
+	$role->add_cap( 'delete_' . SPTRANS_CPT );
 	
-	$role->add_cap( 'edit_translations' );
-	$role->add_cap( 'edit_others_translations' );
-	$role->add_cap( 'publish_translations' );
-	$role->add_cap( 'read_private_translations' );
+	$role->add_cap( 'edit_' . SPTRANS_CPT . 's' );
+	$role->add_cap( 'edit_others_' . SPTRANS_CPT . 's' );
+	$role->add_cap( 'publish_' . SPTRANS_CPT . 's' );
+	$role->add_cap( 'read_private_' . SPTRANS_CPT . 's' );
 	
-	$role->add_cap( 'delete_translations' );
-	$role->add_cap( 'delete_private_translations' );
-	$role->add_cap( 'delete_published_translations' );
-	$role->add_cap( 'delete_others_translations' );
-	$role->add_cap( 'edit_private_translations' );
-	$role->add_cap( 'edit_published_translations' );
+	$role->add_cap( 'delete_' . SPTRANS_CPT . 's' );
+	$role->add_cap( 'delete_private_' . SPTRANS_CPT . 's' );
+	$role->add_cap( 'delete_published_' . SPTRANS_CPT . 's' );
+	$role->add_cap( 'delete_others_' . SPTRANS_CPT . 's' );
+	$role->add_cap( 'edit_private_' . SPTRANS_CPT . 's' );
+	$role->add_cap( 'edit_published_' . SPTRANS_CPT . 's' );
 }
 
 /**

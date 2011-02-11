@@ -1,7 +1,5 @@
 <?php
 class PunctualTranslation_Admin_Settings {
-	private $post_type = 'translation';
-	
 	/**
 	 * Constructor
 	 *
