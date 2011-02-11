@@ -53,7 +53,9 @@ function PunctualTranslation_Init() {
 	// Admin
 	if ( is_admin() ) {
 		require( SPTRANS_DIR . '/inc/class.admin.php' );
+		require( SPTRANS_DIR . '/inc/class.admin.settings.php' );
 		$punctual_translation['admin'] = new PunctualTranslation_Admin();
+		$punctual_translation['admin-settings'] = new PunctualTranslation_Admin_Settings();
 	}
 	
 	// Widget
