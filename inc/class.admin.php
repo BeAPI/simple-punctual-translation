@@ -67,6 +67,8 @@ class PunctualTranslation_Admin {
 	 */
 	function pageSettings() {
 		$current_options = get_option( SPTRANS_OPTIONS_NAME );
+		if (!isset($current_options['auto'])) // Skip notices...
+			$current_options['auto'] = array();
 		?>
 		<div class="wrap">
 			<h2><?php _e('Simple Punctual Translation', 'punctual-translation'); ?></h2>
@@ -114,6 +116,23 @@ class PunctualTranslation_Admin {
 							<label style="display:block;">
 								<input type="radio" name="punctual-translation[rewrite]" value="rewrite" <?php checked( 'rewrite', $current_options['rewrite'] ); ?> /> 
 								<?php _e('Rewrite, prefix URL with "/fr/my-content/"', 'punctual-translation'); ?>
+							</label>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row"><?php _e('Auto add languages available at the end of post', 'punctual-translation'); ?></th>
+						<td>
+							<label style="display:block;">
+								<input type="checkbox" name="punctual-translation[auto][]" value="content" <?php checked( in_array('content', (array)$current_options['auto']), true ); ?> /> 
+								<?php _e('On hook "the_content". (page, post single, etc.)', 'punctual-translation'); ?>
+							</label>
+							<label style="display:block;">
+								<input type="checkbox" name="punctual-translation[auto][]" value="excerpt" <?php checked( in_array('excerpt', (array)$current_options['auto']), true ); ?> /> 
+								<?php _e('On hook "the_excerpt" (category, tags, home, etc.)', 'punctual-translation'); ?>
+							</label>
+							<label style="display:block;">
+								<input type="checkbox" name="punctual-translation[auto][]" value="feed" <?php checked( in_array('feed', (array)$current_options['auto']), true ); ?> /> 
+								<?php _e('On feed hook "the_content_feed" and "the_excerpt_rss" (rss2, atom)', 'punctual-translation'); ?>
 							</label>
 						</td>
 					</tr>

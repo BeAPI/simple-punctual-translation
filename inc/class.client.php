@@ -28,6 +28,9 @@ class PunctualTranslation_Client {
 		// Admin messages
 		add_filter( 'post_updated_messages', array(&$this, 'updateMessages') );
 		add_action( 'contextual_help', array(&$this, 'helpText'), 10, 3 );
+		
+		// Auto add languages ?
+		add_action( 'template_redirect', array(&$this, 'determineAutoLanguages') );
 	}
 	
 	/**
@@ -316,6 +319,47 @@ class PunctualTranslation_Client {
 			AND p.post_status = 'publish'");
 			
 		return $objects;
+	}
+	
+	/**
+	 * Need to move register hook of auto display languages to template_redirect for test is_feed()
+	 *
+	 * @return void
+	 * @author Amaury Balmer
+	 */
+	function determineAutoLanguages() {
+		$current_options = get_option( SPTRANS_OPTIONS_NAME );
+
+		// Auto add languages ?
+		if ( isset($current_options['auto']) && !empty($current_options['auto']) && is_array($current_options['auto']) ) {
+			if ( in_array('content', $current_options['auto']) && !is_feed() )
+				add_filter( 'the_content', array(&$this, 'autoDisplayLanguages') );
+				
+			if ( in_array('excerpt', $current_options['auto']) && !is_feed() )
+				add_filter( 'the_excerpt', array(&$this, 'autoDisplayLanguages') );
+				
+			if ( in_array('feed', $current_options['auto']) && is_feed() ) {
+				add_filter( 'the_content_feed', array(&$this, 'autoDisplayLanguages') );
+				add_filter( 'the_excerpt_rss', array(&$this, 'autoDisplayLanguages') );
+			}
+		}
+	}
+	
+	/**
+	 * Auto add available languages at the end of post content, excerpt.
+	 *
+	 * @param string $content 
+	 * @return string
+	 * @author Amaury Balmer
+	 */
+	function autoDisplayLanguages( $content = '' ) {
+		global $post;
+		
+		$html = get_the_post_available_languages( '<p>'.__('Also available in : ', 'punctual-translation'), ', ', '</p>' );
+		if ( empty($html) )
+			return $content;
+		
+		return $content . '<div class="post_available_languages">' . $html . '</div>';
 	}
 }
 ?>
