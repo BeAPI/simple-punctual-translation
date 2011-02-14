@@ -142,7 +142,7 @@ class PunctualTranslation_Admin {
 		$current_terms 		= wp_get_object_terms($post->ID, SPTRANS_TAXO, array('fields' => 'ids'));
 		$current_term_id 	= current($current_terms);
 		
-		echo '<select name="language_translation" id="language_translation">' . "\n";
+		echo '<select name="language_translation" id="language_translation" style="width:99%">' . "\n";
 			foreach( get_terms( SPTRANS_TAXO, array('hide_empty' => false) ) as $term ) {
 				echo '<option value="'.$term->term_id.'" '.selected( $term->term_id, $current_term_id, false ).'>'.$term->name.'</option>' . "\n";
 			}
@@ -201,7 +201,7 @@ class PunctualTranslation_Admin {
 			<p>
 				<label for="original_post_type_js"><?php _e('Post types', 'punctual-translation'); ?></label>
 				<br />
-				<select name="original_post_type_js" id="original_post_type_js">
+				<select name="original_post_type_js" id="original_post_type_js" style="width:99%">
 					<?php
 					$current_options = get_option( SPTRANS_OPTIONS_NAME );
 					foreach( (array) $current_options['cpt'] as $cpt ) {
@@ -220,14 +220,14 @@ class PunctualTranslation_Admin {
 				<label for="post_parent_js"><?php _e('Original', 'punctual-translation'); ?></label>
 				<br />
 				<div id="ajax-destination-select-original"></div>
-				<select name="post_parent_js" id="post_parent_js"> AJAX Values </select>
+				<select name="post_parent_js" id="post_parent_js" style="width:99%"> AJAX Values </select>
 			</p>
 		</div>
 		
 		<div id="original-content" class="hide-if-js">
 			<label for="parent_id"><?php _e('Original', 'punctual-translation'); ?></label>
 			<br />
-			<select name="parent_id" id="parent_id">
+			<select name="parent_id" id="parent_id" style="width:99%">
 				<option value="-"><?php _e('Please choose a content', 'punctual-translation'); ?></option>
 				<?php
 				// Current selected value
