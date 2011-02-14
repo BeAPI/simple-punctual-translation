@@ -41,9 +41,9 @@ function checkUnicityTranslation( current_value ) {
 		data: "action=test_once_translation&parent_id="+jQuery("select#parent_id").val()+"&current_id="+jQuery("input#post_ID").val()+"&current_value="+current_value,
 		success: function(msg) {
 			if ( msg != 'ok' ) {
-				jQuery("#language_duplicate_ajax").html("<div class='error'><p>"+translationL10n.errorText+"</p></div>");
+				jQuery("#language_duplicate_ajax").html("<div class='error' style='margin: 5px 0 0;'><p>"+translationL10n.errorText+"</p></div>");
 			} else {
-				jQuery("#language_duplicate_ajax").html("<div class='updated'><p>"+translationL10n.successText+"</p></div>");
+				jQuery("#language_duplicate_ajax").html("<div class='updated' style='margin: 5px 0 0;'><p>"+translationL10n.successText+"</p></div>");
 			}
 		}
 	});

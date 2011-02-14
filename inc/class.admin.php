@@ -219,7 +219,7 @@ class PunctualTranslation_Admin {
 			<p>
 				<label for="post_parent_js"><?php _e('Original', 'punctual-translation'); ?></label>
 				<br />
-				<div id="ajax-destination-select-original"></div>
+				<span id="ajax-destination-select-original"></span>
 				<select name="post_parent_js" id="post_parent_js" style="width:99%"> AJAX Values </select>
 			</p>
 		</div>
