@@ -126,7 +126,7 @@ function get_the_post_available_languages( $before = '', $sep = ', ', $after = '
 	$lang = get_query_var(SPTRANS_QVAR);
 	if( !empty($lang) ) {
 		$current_options = get_option( SPTRANS_OPTIONS_NAME );
-		$links['original'] = '<a href="' . get_permalink( $post->post_parent) . '" rel="alternate" hreflang="'.esc_attr($current_options['original_lang_name']).'">' . esc_html($current_options['original_lang_name']) . '</a>';
+		$links['original'] = '<a href="' . get_permalink( $post->ID ) . '" rel="alternate" hreflang="'.esc_attr($current_options['original_lang_name']).'">' . esc_html($current_options['original_lang_name']) . '</a>';
 		unset($links[$lang]);
 	}
 	
