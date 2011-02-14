@@ -119,14 +119,14 @@ function get_the_post_available_languages( $before = '', $sep = ', ', $after = '
 		$link = get_translation_permalink( $post->ID, $language->slug );
 		if ( is_wp_error( $link ) )
 			return '';
-		$links[$language->slug] = '<a href="' . $link . '" rel="alternate" hreflang="'.$language->slug.'">' . $language->name . '</a>';
+		$links[$language->slug] = '<a class="lang-'.$language->slug.'" href="' . $link . '" rel="alternate" hreflang="'.$language->slug.'">' . $language->name . '</a>';
 	}
 	
 	// Add original lang if a lang is already load, and delete current lang display
 	$lang = get_query_var(SPTRANS_QVAR);
 	if( !empty($lang) ) {
 		$current_options = get_option( SPTRANS_OPTIONS_NAME );
-		$links['original'] = '<a href="' . get_permalink( $post->ID ) . '" rel="alternate" hreflang="'.esc_attr($current_options['original_lang_name']).'">' . esc_html($current_options['original_lang_name']) . '</a>';
+		$links['original'] = '<a class="lang-original" href="' . get_permalink( $post->ID ) . '" rel="alternate" hreflang="'.esc_attr($current_options['original_lang_name']).'">' . esc_html($current_options['original_lang_name']) . '</a>';
 		unset($links[$lang]);
 	}
 	
