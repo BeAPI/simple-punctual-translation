@@ -46,7 +46,7 @@ class PunctualTranslation_Admin {
 		global $wpdb;
 		
 		if ( $post_before->post_type == SPTRANS_CPT ) {
-			if ( $post_before->post_parent != 0 && $post_after->post_parent != $post_before->post_parent ) {
+			if ( $post_before->post_parent != 0 && $post_after->post_parent != $post_before->post_parent && !isset($_POST['parent_id']) ) {
 				$wpdb->update( $wpdb->posts, array('post_parent' => (int) $post_before->post_parent), array('ID' => $post_ID) );
 			}
 		}

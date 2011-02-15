@@ -1,0 +1,308 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Simple Punctual Translation\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-02-15 12:13+0100\n"
+"PO-Revision-Date: 2011-02-15 12:29+0100\n"
+"Last-Translator: Amaury Balmer <amaury@balmer.fr>\n"
+"Language-Team: BeAPI <translation@beapi.fr>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _e;__;_x;_c\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-Language: french\n"
+"X-Poedit-Country: FRANCE\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"Plural-Forms: nplurals=2; plural=n>1\n"
+"X-Poedit-SearchPath-0: \n"
+
+#: /inc/class.admin.php:73
+msgid "This translation is unique, fine..."
+msgstr "Cette traduction est unique, parfait..."
+
+#: /inc/class.admin.php:74
+msgid "Duplicate translation detected !"
+msgstr "Doublon de traduction detecté !"
+
+#: /inc/class.admin.php:124
+#: /inc/class.admin.settings.php:22
+#: /inc/class.client.php:45
+msgid "Translations"
+msgstr "Traductions"
+
+#: /inc/class.admin.php:129
+#: /inc/class.admin.php:263
+#: /inc/class.client.php:82
+msgid "Language"
+msgstr "Langue"
+
+#: /inc/class.admin.php:130
+msgid "Original content"
+msgstr "Contenu original"
+
+#: /inc/class.admin.php:165
+msgid "Existings translations :"
+msgstr "Traductions existantes :"
+
+#: /inc/class.admin.php:173
+#, php-format
+msgid "%1$s - %2$s - %3$s"
+msgstr "%1$s - %2$s - %3$s"
+
+#: /inc/class.admin.php:178
+msgid "Translate this content"
+msgstr "Traduire ce contenu"
+
+#: /inc/class.admin.php:202
+msgid "Post types"
+msgstr "Types de contenu"
+
+#: /inc/class.admin.php:220
+#: /inc/class.admin.php:228
+#: /inc/class.admin.php:262
+msgid "Original"
+msgstr "Original"
+
+#: /inc/class.admin.php:231
+msgid "Please choose a content"
+msgstr "Merci de choisir un contenu"
+
+#: /inc/class.admin.php:310
+msgid "Translate"
+msgstr "Traduire"
+
+#: /inc/class.admin.settings.php:22
+#: /inc/class.admin.settings.php:47
+msgid "Simple Punctual Translation"
+msgstr "Simple Punctual Translation"
+
+#: /inc/class.admin.settings.php:54
+msgid "Original language name"
+msgstr "Nom de la langue originale"
+
+#: /inc/class.admin.settings.php:60
+msgid "Post types translatable :"
+msgstr "Types de contenu traduisible :"
+
+#: /inc/class.admin.settings.php:70
+msgid "Translation mode :"
+msgstr "Mode de traduction :"
+
+#: /inc/class.admin.settings.php:74
+msgid "Manual"
+msgstr "Manuel"
+
+#: /inc/class.admin.settings.php:78
+msgid "Auto (singular only)"
+msgstr "Automatique (vue singular uniquement)"
+
+#: /inc/class.admin.settings.php:83
+msgid "Address mode :"
+msgstr "Format des adresses :"
+
+#: /inc/class.admin.settings.php:87
+msgid "Classic, adding \"?lang=fr\" for the URL."
+msgstr "Classique, ajout d'un paramètre dans l'URL \"?lang=fr\""
+
+#: /inc/class.admin.settings.php:91
+msgid "Rewrite, prefix URL with \"/fr/my-content/\""
+msgstr "Réécrit, préfixe sur les adresses \"/fr/my-content/\""
+
+#: /inc/class.admin.settings.php:96
+msgid "Auto add languages available at the end of post"
+msgstr "Ajouter automatiquement les langues disponibles à la fin du contenu"
+
+#: /inc/class.admin.settings.php:100
+msgid "On hook \"the_content\". (page, post single, etc.)"
+msgstr "Sur le crochet \"the_content\". (page, post single, etc.)"
+
+#: /inc/class.admin.settings.php:104
+msgid "On hook \"the_excerpt\" (category, tags, home, etc.)"
+msgstr "Sur le crochet \"the_excerpt\" (category, tags, home, etc.)"
+
+#: /inc/class.admin.settings.php:108
+msgid "On feed hook \"the_content_feed\" and \"the_excerpt_rss\" (rss2, atom)"
+msgstr "Sur le crochet \"the_content_feed\" and \"the_excerpt_rss\" (rss2, atom)"
+
+#: /inc/class.admin.settings.php:115
+msgid "Save Changes"
+msgstr "Enregistrer les modifications"
+
+#: /inc/class.client.php:46
+msgid "Translation"
+msgstr "Traduction"
+
+#: /inc/class.client.php:47
+msgid "Add New"
+msgstr "Ajouter"
+
+#: /inc/class.client.php:48
+msgid "Add New Translation"
+msgstr "Ajouter une traduction"
+
+#: /inc/class.client.php:49
+msgid "Edit Translation"
+msgstr "Modifier une traduction"
+
+#: /inc/class.client.php:50
+msgid "New Translation"
+msgstr "Nouvelle traduction"
+
+#: /inc/class.client.php:51
+msgid "View Translation"
+msgstr "Voir la traduction"
+
+#: /inc/class.client.php:52
+msgid "Search Translations"
+msgstr "Chercher une traduction"
+
+#: /inc/class.client.php:53
+msgid "No Translations found"
+msgstr "Aucun traduction trouvée"
+
+#: /inc/class.client.php:54
+msgid "No Translations found in Trash"
+msgstr "Aucune traduction trouvée dans la corbeille"
+
+#: /inc/class.client.php:55
+msgid "Parent Translation:"
+msgstr "Traduction parente :"
+
+#: /inc/class.client.php:81
+msgid "Languages"
+msgstr "Langues"
+
+#: /inc/class.client.php:83
+msgid "Search Languages"
+msgstr "Chercher une langue"
+
+#: /inc/class.client.php:85
+msgid "All Languages"
+msgstr "Toutes les langues"
+
+#: /inc/class.client.php:86
+msgid "Edit Language"
+msgstr "Modifier la langue"
+
+#: /inc/class.client.php:87
+msgid "Update Language"
+msgstr "Mettre à jour la langue"
+
+#: /inc/class.client.php:88
+msgid "Add New Language"
+msgstr "Ajouter une nouvelle langue"
+
+#: /inc/class.client.php:89
+msgid "New Language Name"
+msgstr "Nouveau nom de langue"
+
+#: /inc/class.client.php:114
+#, php-format
+msgid "Translation updated. <a href=\"%s\">View translation</a>"
+msgstr "Traduction mise à jour. <a href=\"%s\">Voir la traduction</a>"
+
+#: /inc/class.client.php:115
+msgid "Custom field updated."
+msgstr "Champ personnalisé mis à jour."
+
+#: /inc/class.client.php:116
+msgid "Custom field deleted."
+msgstr "Champ personnalisé effacé."
+
+#: /inc/class.client.php:117
+msgid "Translation updated."
+msgstr "Traduction mise à jour."
+
+#: /inc/class.client.php:118
+#, php-format
+msgid "Translation restored to revision from %s"
+msgstr "Traduction restaurée de la révision %s"
+
+#: /inc/class.client.php:119
+#, php-format
+msgid "Translation published. <a href=\"%s\">View translation</a>"
+msgstr "Traduction publiée. <a href=\"%s\">Voir la traduction</a>"
+
+#: /inc/class.client.php:120
+msgid "Translation saved."
+msgstr "Traduction enregistrée."
+
+#: /inc/class.client.php:121
+#, php-format
+msgid "Translation submitted. <a target=\"_blank\" href=\"%s\">Preview translation</a>"
+msgstr "Traduction soumise à validation. <a target=\"_blank\" href=\"%s\">Prévisualiser la traduction</a>"
+
+#: /inc/class.client.php:122
+#, php-format
+msgid "Translation scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">Preview translation</a>"
+msgstr "Traduction programmée pour : <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">Prévisualiser la traduction</a>"
+
+#: /inc/class.client.php:124
+msgid "j F Y @ G:i"
+msgstr "j F Y @ G:i"
+
+#: /inc/class.client.php:125
+#, php-format
+msgid "Translation draft updated. <a target=\"_blank\" href=\"%s\">Preview translation</a>"
+msgstr "Brouillon de traduction mis à jour. <a target=\"_blank\" href=\"%s\">Prévisualiser la traduction</a>"
+
+#: /inc/class.client.php:142
+msgid "Things to remember when adding or editing a translation."
+msgstr "Choses à rappeler lors de l'ajout ou l'édition d'une traduction."
+
+#: /inc/class.client.php:144
+msgid "This is the help screen displaying the table of translations."
+msgstr "Ceci est l'aide de l'écran affichant les traductions."
+
+#: /inc/class.client.php:359
+#: /inc/class.widget.php:45
+#: /samples/page.php:24
+msgid "Also available in : "
+msgstr "Disponible également en :"
+
+#: /inc/class.widget.php:16
+msgid "Languages selector Content Widget"
+msgstr "Widget de sélecteur de langues"
+
+#: /inc/class.widget.php:16
+msgid "Display available languages selector"
+msgstr "Affiche un sélecteur pour les langues disponibles"
+
+#: /inc/class.widget.php:56
+#: /inc/class.widget.php:94
+msgid "Languages selector"
+msgstr "Sélecteur de langues"
+
+#: /inc/class.widget.php:101
+msgid "Title"
+msgstr "Titre"
+
+#: /inc/class.widget.php:107
+msgid "Display as"
+msgstr "Affiché comme"
+
+#: /inc/class.widget.php:109
+msgid "List"
+msgstr "Liste"
+
+#: /inc/class.widget.php:110
+msgid "Separed with comma"
+msgstr "Séparé avec une virgule"
+
+#: /inc/functions.plugin.php:13
+msgid "English"
+msgstr "English"
+
+#: /inc/functions.plugin.php:21
+msgid "Translator"
+msgstr "Traducteur"
+
+#: /samples/page.php:15
+msgid "Pages:"
+msgstr "Pages :"
+
+#: /samples/page.php:16
+msgid "Edit"
+msgstr "Modifier"
+
