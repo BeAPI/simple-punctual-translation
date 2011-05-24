@@ -100,7 +100,6 @@ class PunctualTranslation_Client {
 	
 	/**
 	 * Display correct message when user update object
-	 * TODO: change preview and view link for translated version of a content
 	 *
 	 * @param array $messages 
 	 * @return array
@@ -109,20 +108,23 @@ class PunctualTranslation_Client {
 	function updateMessages( $messages ) {
 		global $post, $post_ID;
 		
+		$current_terms 		= wp_get_object_terms($post_ID, SPTRANS_TAXO, array('fields' => 'slug'));
+		$current_term_slug 	= current($current_terms);
+		
 		$messages[SPTRANS_CPT] = array(
 			 0 => '', // Unused. Messages start at index 1.
-			 1 => sprintf( __('Translation updated. <a href="%s">View translation</a>', 'punctual-translation'), esc_url( get_permalink($post_ID) ) ),
+			 1 => sprintf( __('Translation updated. <a href="%s">View translation</a>', 'punctual-translation'), esc_url( get_translation_permalink($post_ID, $current_term_slug) ) ),
 			 2 => __('Custom field updated.', 'punctual-translation'),
 			 3 => __('Custom field deleted.', 'punctual-translation'),
 			 4 => __('Translation updated.', 'punctual-translation'),
 			 5 => isset($_GET['revision']) ? sprintf( __('Translation restored to revision from %s', 'punctual-translation'), wp_translation_revision_title( (int) $_GET['revision'], false ) ) : false, /* translators: %s: date and time of the revision */
-			 6 => sprintf( __('Translation published. <a href="%s">View translation</a>', 'punctual-translation'), esc_url( get_permalink($post_ID) ) ),
+			 6 => sprintf( __('Translation published. <a href="%s">View translation</a>', 'punctual-translation'), esc_url( get_translation_permalink($post_ID, $current_term_slug) ) ),
 			 7 => __('Translation saved.', 'punctual-translation'),
-			 8 => sprintf( __('Translation submitted. <a target="_blank" href="%s">Preview translation</a>', 'punctual-translation'), esc_url( add_query_arg( 'preview', 'true', get_permalink($post_ID) ) ) ),
+			 8 => sprintf( __('Translation submitted. <a target="_blank" href="%s">Preview translation</a>', 'punctual-translation'), esc_url( add_query_arg( 'preview', 'true', get_translation_permalink($post_ID, $current_term_slug) ) ) ),
 			 9 => sprintf( __('Translation scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview translation</a>', 'punctual-translation'),
 				// translators: Publish box date format, see http://php.net/date
-				date_i18n( __( 'j F Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink($post_ID) ) ),
-			10 => sprintf( __('Translation draft updated. <a target="_blank" href="%s">Preview translation</a>', 'punctual-translation'), esc_url( add_query_arg( 'preview', 'true', get_permalink($post_ID) ) ) ),
+				date_i18n( __( 'j F Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_translation_permalink($post_ID, $current_term_slug) ) ),
+			10 => sprintf( __('Translation draft updated. <a target="_blank" href="%s">Preview translation</a>', 'punctual-translation'), esc_url( add_query_arg( 'preview', 'true', get_translation_permalink($post_ID, $current_term_slug) ) ) ),
 		);
 		
 		return $messages;
@@ -286,6 +288,7 @@ class PunctualTranslation_Client {
 	
 	/**
 	 * Get the object translateds for a specific object
+	 * TODO: publish status for all context ? admin preview ?
 	 *
 	 * @param string $parent_id 
 	 * @param string $fields 

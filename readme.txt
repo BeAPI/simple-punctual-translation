@@ -87,6 +87,8 @@ The Simple Punctual Translation can be installed in 3 easy steps:
 
 == Changelog ==
 
+* Version 1.0.3 :
+	* Fix preview link on admin
 * Version 1.0.2 :
 	* Add french translation
 	* Add readme.txt

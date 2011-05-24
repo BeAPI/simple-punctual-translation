@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Simple Punctual Translation
-Version: 1.0.2
+Version: 1.0.3
 Plugin URI: http://www.beapi.fr
 Description: A small plugin for WordPress that allow to translate any post type in another languages. This plugin is not usable out of the box. It's require some changes on your theme.
 Author: BeAPI
@@ -15,7 +15,7 @@ TODO :
 	Javascript
 */
 
-define( 'SPTRANS_VERSION', 		'1.0.2' );
+define( 'SPTRANS_VERSION', 		'1.0.3' );
 define( 'SPTRANS_FOLDER', 		'punctual-translation' );
 define( 'SPTRANS_OPTIONS_NAME', 'punctual-translation' ); // Option name for save settings
 
