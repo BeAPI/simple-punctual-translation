@@ -116,7 +116,7 @@ class PunctualTranslation_Admin {
 	 * @author Amaury Balmer
 	 */
 	function registerMetaBox( $post_type ) {
-		if ( !current_user_can('edit_'.SPTRANS_CPT) )
+		if ( !current_user_can('edit_'.SPTRANS_CPT.'s') )
 			return false;
 			
 		$current_options = get_option( SPTRANS_OPTIONS_NAME );
@@ -258,7 +258,7 @@ class PunctualTranslation_Admin {
 	 * @author Amaury Balmer
 	 */
 	function addColumns( $defaults, $post_type ) {
-		if ( $post_type == SPTRANS_CPT && current_user_can('edit_'.SPTRANS_CPT) ) {
+		if ( $post_type == SPTRANS_CPT && current_user_can('edit_'.SPTRANS_CPT.'s') ) {
 			$defaults['original-translation'] = __('Original', 'punctual-translation');
 			$defaults['_taxo-language'] = __('Language', 'punctual-translation');
 		}
@@ -306,7 +306,7 @@ class PunctualTranslation_Admin {
 	 */
 	function extendActionsList( $actions, $object ) {
 		$current_options = get_option( SPTRANS_OPTIONS_NAME );
-		if ( $object->post_type != SPTRANS_CPT && current_user_can('edit_'.SPTRANS_CPT) && in_array($object->post_type, (array) $current_options['cpt']) == true )
+		if ( $object->post_type != SPTRANS_CPT && current_user_can('edit_'.SPTRANS_CPT.'s') && in_array($object->post_type, (array) $current_options['cpt']) == true )
 			$actions['translate'] = '<a href="'.admin_url('post-new.php?post_type='.SPTRANS_CPT.'&post_parent='.$object->ID).'">'.__('Translate', 'punctual-translation').'</a>' . "\n";
 		return $actions;
 	}
