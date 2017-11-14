@@ -1,0 +1,15 @@
+{
+  "name"       : "beapi/simple-punctual-translation",
+  "description": "Translate pages and post_types easily",
+  "type"       : "wordpress-plugin",
+  "license"    : "GPL-3.0+",
+  "authors"    : [
+    {
+      "name"    : "Beapi",
+      "homepage"    : "technique@beapi.fr"
+    }
+  ],
+  "require": {
+    "composer/installers": "~1.0"
+  }
+}
