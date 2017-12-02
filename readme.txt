@@ -87,6 +87,8 @@ The Simple Punctual Translation can be installed in 3 easy steps:
 
 == Changelog ==
 
+* Version 1.0.5 :
+	* Fix notice / sql error on 404 page
 * Version 1.0.4 :
 	* Use method __construct() for Widget Constructor
 * Version 1.0.3 :

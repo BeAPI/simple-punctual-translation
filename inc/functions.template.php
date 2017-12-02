@@ -2,18 +2,18 @@
 /**
  * Translate the current post on an another language
  *
- * @param string $language_slug 
+ * @param string $language_slug
  * @return boolean
  * @author Amaury Balmer
  */
 function switch_to_language( $language_slug = null ) {
 	global $post, $punctual_translation, $translation_flag, $original_object;
-	
+
 	// Restore original language before switch again...
 	if ( $translation_flag === true ) {
 		restore_original_language();
 	}
-	
+
 	// Param or Query lang ?
 	$lang = get_query_var(SPTRANS_QVAR);
 	if ( empty($language_slug) && empty($lang) ) {
@@ -22,7 +22,7 @@ function switch_to_language( $language_slug = null ) {
 	} elseif( empty($language_slug) && !empty($lang) ) {
 		$language_slug = $lang;
 	}
-	
+
 	// All is fine ? try to switch
 	if ( !empty($language_slug) ) {
 		$translation = $punctual_translation['client']->getTranslateObject( $post->ID, $language_slug, 'object' );
@@ -31,11 +31,11 @@ function switch_to_language( $language_slug = null ) {
 			$translation_flag = true;
 			$post = $translation;
 			setup_postdata($post);
-			
+
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -47,30 +47,30 @@ function switch_to_language( $language_slug = null ) {
  */
 function restore_original_language() {
 	global $post, $translation_flag, $original_object;
-	
+
 	if ( $translation_flag === true ) {
 		$post = $original_object;
 		setup_postdata($post);
 		$translation_flag = false;
-		
+
 		return true;
 	}
-	
+
 	return false;
 }
 
 /**
  * Get the permalink for a translated version of a content
  *
- * @param integer $post 
- * @param string $language_code 
+ * @param integer $post
+ * @param string $language_code
  * @return void
  * @author Amaury Balmer
  */
 function get_translation_permalink( $post_id, $language_code = '' ) {
 	if ( empty($language_code) )
 		return get_permalink( $post_id );
-	
+
 	$permalink = get_option('permalink_structure');
 	$current_options = get_option( SPTRANS_OPTIONS_NAME );
 	if ( '' != $permalink && $current_options['rewrite'] == 'rewrite' ) { // Rewriting enabled ?
@@ -80,14 +80,14 @@ function get_translation_permalink( $post_id, $language_code = '' ) {
 	} else {
 		$link = add_query_arg( array(SPTRANS_QVAR => $language_code), get_permalink( $post_id ) );
 	}
-	
+
 	return apply_filters( 'get_translation_permalink', $link, $post_id, $language_code );
 }
 
 /**
  * Get a PHP array with all languages availables for a content id specific
  *
- * @param integer $object_id 
+ * @param integer $object_id
  * @return void
  * @author Amaury Balmer
  */
@@ -97,17 +97,20 @@ function get_post_available_languages( $object_id = 0 ) {
 }
 
 /**
- * Get HTML of language available for a post 
+ * Get HTML of language available for a post
  *
- * @param string $before 
- * @param string $sep 
- * @param string $after 
+ * @param string $before
+ * @param string $sep
+ * @param string $after
  * @return string
  * @author Amaury Balmer
  */
 function get_the_post_available_languages( $before = '', $sep = ', ', $after = '' ) {
 	global $post;
-	
+
+	if( empty( $post ) ){
+		return '';
+	}
 	// Get available languages
 	$languages = get_post_available_languages( $post->ID );
 	if ( is_wp_error($languages) || empty($languages) )
@@ -121,7 +124,7 @@ function get_the_post_available_languages( $before = '', $sep = ', ', $after = '
 			return '';
 		$links[$language->slug] = '<a class="lang-'.$language->slug.'" href="' . $link . '" rel="alternate" hreflang="'.$language->slug.'">' . $language->name . '</a>';
 	}
-	
+
 	// Add original lang if a lang is already load, and delete current lang display
 	$lang = get_query_var(SPTRANS_QVAR);
 	if( !empty($lang) ) {
@@ -129,7 +132,7 @@ function get_the_post_available_languages( $before = '', $sep = ', ', $after = '
 		$links['original'] = '<a class="lang-original" href="' . get_permalink( $post->ID ) . '" rel="alternate" hreflang="'.esc_attr($current_options['original_lang_name']).'">' . esc_html($current_options['original_lang_name']) . '</a>';
 		unset($links[$lang]);
 	}
-	
+
 	$links = apply_filters( "get_the_post_available_languages", $links );
 	return $before . join( $sep, $links ) . $after;
 }
@@ -137,9 +140,9 @@ function get_the_post_available_languages( $before = '', $sep = ', ', $after = '
 /**
  * Just echo the get_the_post_available_languages() function
  *
- * @param string $before 
- * @param string $sep 
- * @param string $after 
+ * @param string $before
+ * @param string $sep
+ * @param string $after
  * @return void
  * @author Amaury Balmer
  */
