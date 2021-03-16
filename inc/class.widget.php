@@ -4,7 +4,7 @@
  * Class for display language selector
  *
  * @package Deal
- * @author Amaury Balmer
+ * @author  Amaury Balmer
  */
 class PunctualTranslation_Widget extends WP_Widget {
 	/**
@@ -15,10 +15,10 @@ class PunctualTranslation_Widget extends WP_Widget {
 	 */
 	function __construct() {
 		parent::__construct( 'punctual-translation_widget', __( 'Languages selector Content Widget', 'punctual-translation' ),
-			array(
+			[
 				'classname'   => 'punctual-translation-widget',
 				'description' => __( 'Display available languages selector', 'punctual-translation' ),
-			)
+			]
 		);
 	}
 
@@ -89,8 +89,8 @@ class PunctualTranslation_Widget extends WP_Widget {
 	 */
 	function update( $new_instance, $old_instance ) {
 		$instance            = $old_instance;
-		$instance['title']   = strip_tags( $new_instance['title'] );
-		$instance['display'] = strip_tags( $new_instance['display'] );
+		$instance['title']   = sanitize_text_field( $new_instance['title'] );
+		$instance['display'] = sanitize_text_field( $new_instance['display'] );
 
 		return $instance;
 	}
@@ -104,30 +104,30 @@ class PunctualTranslation_Widget extends WP_Widget {
 	 * @author Amaury Balmer
 	 */
 	function form( $instance ) {
-		$defaults = array(
+		$defaults = [
 			'title'   => __( 'Languages selector', 'punctual-translation' ),
-			'display' => 'list'
-		);
+			'display' => 'list',
+		];
 		$instance = wp_parse_args( (array) $instance, $defaults );
 		?>
-        <p>
-            <label>
+		<p>
+			<label>
 				<?php _e( 'Title', 'punctual-translation' ); ?>
-                <input id="<?php echo $this->get_field_id( 'title' ); ?>"
-                       name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo $instance['title']; ?>"
-                       class="widefat"/>
-            </label>
-        </p>
-        <p>
-            <label>
+				<input id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"
+				       name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" value="<?php echo esc_attr( $instance['title'] ); ?>"
+				       class="widefat"/>
+			</label>
+		</p>
+		<p>
+			<label>
 				<?php _e( 'Display as', 'punctual-translation' ); ?>
-                <select id="<?php echo $this->get_field_id( 'display' ); ?>"
-                        name="<?php echo $this->get_field_name( 'display' ); ?>" class="widefat">
-                    <option value="list" <?php selected( 'list', $instance['display'] ); ?>><?php _e( 'List', 'punctual-translation' ); ?></option>
-                    <option value="comma" <?php selected( 'comma', $instance['display'] ); ?>><?php _e( 'Separed with comma', 'punctual-translation' ); ?></option>
-                </select>
-            </label>
-        </p>
+				<select id="<?php echo esc_attr( $this->get_field_id( 'display' ) ); ?>"
+				        name="<?php echo esc_attr( $this->get_field_name( 'display' ) ); ?>" class="widefat">
+					<option value="list" <?php selected( 'list', $instance['display'] ); ?>><?php _e( 'List', 'punctual-translation' ); ?></option>
+					<option value="comma" <?php selected( 'comma', $instance['display'] ); ?>><?php _e( 'Separed with comma', 'punctual-translation' ); ?></option>
+				</select>
+			</label>
+		</p>
 		<?php
 	}
 }
