@@ -7,7 +7,7 @@ class PunctualTranslation_Admin {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function __construct() {
+	public function __construct() {
 		// Fix WordPress process
 		add_action( 'post_updated', [ $this, 'fixPostparentQuickEdit' ], 10, 3 );
 
@@ -44,7 +44,7 @@ class PunctualTranslation_Admin {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function fixPostparentQuickEdit( $post_ID, $post_after, $post_before ) {
+	public function fixPostparentQuickEdit( $post_ID, $post_after, $post_before ) {
 		if ( SPTRANS_CPT !== $post_before->post_type ) {
 			return;
 		}
@@ -63,7 +63,7 @@ class PunctualTranslation_Admin {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function addRessources( $hook_suffix = '' ) {
+	public function addRessources( $hook_suffix = '' ) {
 		global $post;
 
 		if (
@@ -73,10 +73,14 @@ class PunctualTranslation_Admin {
 		) {
 			wp_enqueue_style( 'admin-translation', SPTRANS_URL . '/ressources/admin.css', [], SPTRANS_VERSION, 'all' );
 			wp_enqueue_script( 'admin-translation', SPTRANS_URL . '/ressources/admin.js', [ 'jquery' ], SPTRANS_VERSION );
-			wp_localize_script( 'admin-translation', 'translationL10n', [
-				'successText' => __( 'This translation is unique, fine...', 'punctual-translation' ),
-				'errorText'   => __( 'Duplicate translation detected !', 'punctual-translation' ),
-			] );
+			wp_localize_script(
+				'admin-translation',
+				'translationL10n',
+				[
+					'successText' => __( 'This translation is unique, fine...', 'punctual-translation' ),
+					'errorText'   => __( 'Duplicate translation detected !', 'punctual-translation' ),
+				]
+			);
 		}
 	}
 
@@ -88,7 +92,7 @@ class PunctualTranslation_Admin {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function saveDatasMetaBoxes( $object_id = 0 ) {
+	public function saveDatasMetaBoxes( $object_id = 0 ) {
 		if ( ! isset( $_POST['_meta_translation'] ) || 'true' !== $_POST['_meta_translation'] ) {
 			return;
 		}
@@ -106,7 +110,7 @@ class PunctualTranslation_Admin {
 			if ( ! current_user_can( 'edit_page', $object_id ) ) {
 				return;
 			}
-		} else if ( ! current_user_can( 'edit_post', $object_id ) ) {
+		} elseif ( ! current_user_can( 'edit_post', $object_id ) ) {
 			return;
 		}
 
@@ -127,7 +131,7 @@ class PunctualTranslation_Admin {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function registerMetaBox( $post_type ) {
+	public function registerMetaBox( $post_type ) {
 		if ( ! current_user_can( 'edit_' . SPTRANS_CPT . 's' ) ) {
 			return;
 		}
@@ -152,7 +156,7 @@ class PunctualTranslation_Admin {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function MetaboxLanguageTaxo( $post ) {
+	public function MetaboxLanguageTaxo( $post ) {
 		$current_terms   = wp_get_object_terms( $post->ID, SPTRANS_TAXO, [ 'fields' => 'ids' ] );
 		$current_term_id = current( $current_terms );
 
@@ -174,8 +178,14 @@ class PunctualTranslation_Admin {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function MetaboxTranslation( $post ) {
-		$q_translations = new WP_Query( [ 'post_type' => SPTRANS_CPT, 'post_status' => 'any', 'post_parent' => $post->ID ] );
+	public function MetaboxTranslation( $post ) {
+		$q_translations = new WP_Query(
+			[
+				'post_type'   => SPTRANS_CPT,
+				'post_status' => 'any',
+				'post_parent' => $post->ID,
+			]
+		);
 		if ( $q_translations->have_posts() ) {
 			echo '<h4 style="margin:0;">' . __( 'Existings translations :', 'punctual-translation' ) . '</h4>' . "\n";
 			echo '<ul class="current_translations ul-square">' . "\n";
@@ -203,7 +213,7 @@ class PunctualTranslation_Admin {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function MetaboxOriginalContent( $post ) {
+	public function MetaboxOriginalContent( $post ) {
 		$current_parent    = false;
 		$current_parent_id = 0;
 		if ( 0 === (int) $post->post_parent && isset( $_GET['post_parent'] ) && 0 !== (int) $_GET['post_parent'] ) {
@@ -254,7 +264,14 @@ class PunctualTranslation_Admin {
 				}
 
 				// List all other content
-				$q_all_content = new WP_Query( [ 'post_type' => 'any', 'post_status' => 'any', 'showposts' => 500, 'post__not_in' => [ $current_parent_id ] ] );
+				$q_all_content = new WP_Query(
+					[
+						'post_type'    => 'any',
+						'post_status'  => 'any',
+						'showposts'    => 500,
+						'post__not_in' => [ $current_parent_id ],
+					]
+				);
 				if ( $q_all_content->have_posts() ) {
 					foreach ( $q_all_content->posts as $object ) {
 						echo '<option value="' . esc_attr( $object->ID ) . '">' . esc_html( $object->ID ) . ' - ' . esc_html( $object->post_title ) . '</option>' . "\n";
@@ -277,7 +294,7 @@ class PunctualTranslation_Admin {
 	 * @return array
 	 * @author Amaury Balmer
 	 */
-	function addColumns( $defaults, $post_type ) {
+	public function addColumns( $defaults, $post_type ) {
 		if ( SPTRANS_CPT === $post_type && current_user_can( 'edit_' . SPTRANS_CPT . 's' ) ) {
 			$defaults['original-translation'] = __( 'Original', 'punctual-translation' );
 			$defaults['_taxo-language']       = __( 'Language', 'punctual-translation' );
@@ -295,7 +312,7 @@ class PunctualTranslation_Admin {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function addColumnValue( $column_name, $object_id ) {
+	public function addColumnValue( $column_name, $object_id ) {
 		switch ( $column_name ) {
 			case 'original-translation':
 				$translation = get_post( $object_id );
@@ -307,7 +324,7 @@ class PunctualTranslation_Admin {
 				if ( ! empty( $terms ) ) {
 					$output = [];
 					foreach ( $terms as $term ) {
-						$output[] = "<a href='edit-tags.php?action=edit&taxonomy=" . SPTRANS_TAXO . "&post_type=" . $translation->post_type . "&tag_ID=$term->term_id'> " . esc_html( sanitize_term_field( 'name', $term->name, $term->term_id, SPTRANS_TAXO, 'display' ) ) . "</a>";
+						$output[] = "<a href='edit-tags.php?action=edit&taxonomy=" . SPTRANS_TAXO . '&post_type=' . $translation->post_type . "&tag_ID=$term->term_id'> " . esc_html( sanitize_term_field( 'name', $term->name, $term->term_id, SPTRANS_TAXO, 'display' ) ) . '</a>';
 					}
 					echo join( ', ', $output );
 				} else {
@@ -326,7 +343,7 @@ class PunctualTranslation_Admin {
 	 * @return array
 	 * @author Amaury Balmer
 	 */
-	function extendActionsList( $actions, $object ) {
+	public function extendActionsList( $actions, $object ) {
 		$current_options = get_option( SPTRANS_OPTIONS_NAME );
 		if ( $object->post_type != SPTRANS_CPT && current_user_can( 'edit_' . SPTRANS_CPT . 's' ) && in_array( $object->post_type, (array) $current_options['cpt'] ) == true ) {
 			$actions['translate'] = '<a href="' . admin_url( 'post-new.php?post_type=' . SPTRANS_CPT . '&post_parent=' . $object->ID ) . '">' . __( 'Translate', 'punctual-translation' ) . '</a>' . "\n";
@@ -341,12 +358,18 @@ class PunctualTranslation_Admin {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function ajaxBuildSelect() {
+	public function ajaxBuildSelect() {
 		if ( ! isset( $_REQUEST['post_type'] ) ) {
 			status_header( '404' );
 			die();
 		}
-		$q_all_content = new WP_Query( [ 'post_type' => $_REQUEST['post_type'], 'post_status' => 'any', 'showposts' => 500 ] );
+		$q_all_content = new WP_Query(
+			[
+				'post_type'   => $_REQUEST['post_type'],
+				'post_status' => 'any',
+				'showposts'   => 500,
+			]
+		);
 		if ( $q_all_content->have_posts() ) {
 			foreach ( $q_all_content->posts as $object ) {
 				echo '<option value="' . esc_attr( $object->ID ) . '" ' . selected( $object->ID, (int) $_REQUEST['current_value'], false ) . '>' . esc_html( $object->ID ) . ' - ' . esc_html( $object->post_title ) . '</option>' . "\n";
@@ -360,7 +383,7 @@ class PunctualTranslation_Admin {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function ajaxTestUnicity() {
+	public function ajaxTestUnicity() {
 		if ( ! isset( $_REQUEST['parent_id'], $_REQUEST['current_id'], $_REQUEST['current_value'] ) ) {
 			status_header( '404' );
 			die();
@@ -368,7 +391,14 @@ class PunctualTranslation_Admin {
 		$test_flag = false;
 
 		// Get translations for original content
-		$q_translations = new WP_Query( [ 'post_type' => SPTRANS_CPT, 'post_status' => 'any', 'post_parent' => (int) $_REQUEST['parent_id'], 'post__not_in' => [ (int) $_REQUEST['current_id'] ] ] );
+		$q_translations = new WP_Query(
+			[
+				'post_type'    => SPTRANS_CPT,
+				'post_status'  => 'any',
+				'post_parent'  => (int) $_REQUEST['parent_id'],
+				'post__not_in' => [ (int) $_REQUEST['current_id'] ],
+			]
+		);
 		if ( $q_translations->have_posts() ) {
 			foreach ( $q_translations->posts as $translation ) { // Test language of theses translations
 				$language = get_the_terms( $translation->ID, SPTRANS_TAXO );
@@ -397,7 +427,7 @@ class PunctualTranslation_Admin {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function resetRewritingRules() {
+	public function resetRewritingRules() {
 		flush_rewrite_rules( false );
 	}
 }

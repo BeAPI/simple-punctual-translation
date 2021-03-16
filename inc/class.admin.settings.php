@@ -7,7 +7,7 @@ class PunctualTranslation_Admin_Settings {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function __construct() {
+	public function __construct() {
 		// Menu setting
 		add_action( 'admin_menu', [ $this, 'addMenu' ] );
 		add_action( 'admin_init', [ $this, 'registerSettings' ] );
@@ -19,7 +19,7 @@ class PunctualTranslation_Admin_Settings {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function addMenu() {
+	public function addMenu() {
 		add_options_page( __( 'Simple Punctual Translation', 'punctual-translation' ), __( 'Translations', 'punctual-translation' ), 'manage_options', 'punctual-translation-settings', [ $this, 'pageSettings' ] );
 	}
 
@@ -29,7 +29,7 @@ class PunctualTranslation_Admin_Settings {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function registerSettings() {
+	public function registerSettings() {
 		register_setting( 'punctual-translation-settings-group', SPTRANS_OPTIONS_NAME );
 	}
 
@@ -39,7 +39,7 @@ class PunctualTranslation_Admin_Settings {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function pageSettings() {
+	public function pageSettings() {
 		$current_options = get_option( SPTRANS_OPTIONS_NAME );
 		if ( ! isset( $current_options['auto'] ) ) {
 			$current_options['auto'] = [];
@@ -114,7 +114,7 @@ class PunctualTranslation_Admin_Settings {
 				</table>
 
 				<p class="submit">
-					<input type="submit" class="button-primary" value="<?php _e( 'Save Changes', 'punctual-translation' ) ?>"/>
+					<input type="submit" class="button-primary" value="<?php _e( 'Save Changes', 'punctual-translation' ); ?>"/>
 				</p>
 			</form>
 		</div>

@@ -13,7 +13,7 @@ class PunctualTranslation_Client {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function __construct() {
+	public function __construct() {
 		// CPT, Taxo
 		add_action( 'init', [ $this, 'Register_CPT' ], 1 );
 
@@ -50,62 +50,69 @@ class PunctualTranslation_Client {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function Register_CPT() {
-		register_post_type( SPTRANS_CPT, [
-			'labels'              => [
-				'name'               => _x( 'Translations', 'punctual-translation post type general name', 'punctual-translation' ),
-				'singular_name'      => _x( 'Translation', 'punctual-translation post type singular name', 'punctual-translation' ),
-				'add_new'            => _x( 'Add New', 'punctual-translation', 'punctual-translation' ),
-				'add_new_item'       => __( 'Add New Translation', 'punctual-translation' ),
-				'edit_item'          => __( 'Edit Translation', 'punctual-translation' ),
-				'new_item'           => __( 'New Translation', 'punctual-translation' ),
-				'view_item'          => __( 'View Translation', 'punctual-translation' ),
-				'search_items'       => __( 'Search Translations', 'punctual-translation' ),
-				'not_found'          => __( 'No Translations found', 'punctual-translation' ),
-				'not_found_in_trash' => __( 'No Translations found in Trash', 'punctual-translation' ),
-				'parent_item_colon'  => __( 'Parent Translation:', 'punctual-translation' ),
-			],
-			'description'         => 'Translations for Simple Punctual Translation',
-			'publicly_queryable'  => false,
-			'exclude_from_search' => true,
-			'public'              => false,
-			'capability_type'     => SPTRANS_CPT,
-			'map_meta_cap'        => true,
-			'hierarchical'        => false,
-			'rewrite'             => false,
-			'query_var'           => SPTRANS_CPT,
-			'supports'            => [ 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'revisions' ],
-			'taxonomies'          => [],
-			'show_ui'             => true,
-			'menu_position'       => 100,
-			'has_archive'         => false,
-			'can_export'          => true,
-			'show_in_nav_menus'   => false,
-			'show_in_rest'   => true,
-		] );
+	public function Register_CPT() {
+		register_post_type(
+			SPTRANS_CPT,
+			[
+				'labels'              => [
+					'name'               => _x( 'Translations', 'punctual-translation post type general name', 'punctual-translation' ),
+					'singular_name'      => _x( 'Translation', 'punctual-translation post type singular name', 'punctual-translation' ),
+					'add_new'            => _x( 'Add New', 'punctual-translation', 'punctual-translation' ),
+					'add_new_item'       => __( 'Add New Translation', 'punctual-translation' ),
+					'edit_item'          => __( 'Edit Translation', 'punctual-translation' ),
+					'new_item'           => __( 'New Translation', 'punctual-translation' ),
+					'view_item'          => __( 'View Translation', 'punctual-translation' ),
+					'search_items'       => __( 'Search Translations', 'punctual-translation' ),
+					'not_found'          => __( 'No Translations found', 'punctual-translation' ),
+					'not_found_in_trash' => __( 'No Translations found in Trash', 'punctual-translation' ),
+					'parent_item_colon'  => __( 'Parent Translation:', 'punctual-translation' ),
+				],
+				'description'         => 'Translations for Simple Punctual Translation',
+				'publicly_queryable'  => false,
+				'exclude_from_search' => true,
+				'public'              => false,
+				'capability_type'     => SPTRANS_CPT,
+				'map_meta_cap'        => true,
+				'hierarchical'        => false,
+				'rewrite'             => false,
+				'query_var'           => SPTRANS_CPT,
+				'supports'            => [ 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'revisions' ],
+				'taxonomies'          => [],
+				'show_ui'             => true,
+				'menu_position'       => 100,
+				'has_archive'         => false,
+				'can_export'          => true,
+				'show_in_nav_menus'   => false,
+				'show_in_rest'        => true,
+			]
+		);
 
-		register_taxonomy( SPTRANS_TAXO, SPTRANS_CPT, [
-			'hierarchical'          => false,
-			'update_count_callback' => '_update_post_term_count',
-			'labels'                => [
-				'name'                       => __( 'Languages', 'punctual-translation' ),
-				'singular_name'              => __( 'Language', 'punctual-translation' ),
-				'search_items'               => __( 'Search Languages', 'punctual-translation' ),
-				'popular_items'              => null,
-				'all_items'                  => __( 'All Languages', 'punctual-translation' ),
-				'edit_item'                  => __( 'Edit Language', 'punctual-translation' ),
-				'update_item'                => __( 'Update Language', 'punctual-translation' ),
-				'add_new_item'               => __( 'Add New Language', 'punctual-translation' ),
-				'new_item_name'              => __( 'New Language Name', 'punctual-translation' ),
-				'separate_items_with_commas' => null,
-				'add_or_remove_items'        => null,
-				'choose_from_most_used'      => null,
-			],
-			'query_var'             => SPTRANS_TAXO,
-			'rewrite'               => false,
-			'public'                => false,
-			'show_ui'               => true,
-		] );
+		register_taxonomy(
+			SPTRANS_TAXO,
+			SPTRANS_CPT,
+			[
+				'hierarchical'          => false,
+				'update_count_callback' => '_update_post_term_count',
+				'labels'                => [
+					'name'                       => __( 'Languages', 'punctual-translation' ),
+					'singular_name'              => __( 'Language', 'punctual-translation' ),
+					'search_items'               => __( 'Search Languages', 'punctual-translation' ),
+					'popular_items'              => null,
+					'all_items'                  => __( 'All Languages', 'punctual-translation' ),
+					'edit_item'                  => __( 'Edit Language', 'punctual-translation' ),
+					'update_item'                => __( 'Update Language', 'punctual-translation' ),
+					'add_new_item'               => __( 'Add New Language', 'punctual-translation' ),
+					'new_item_name'              => __( 'New Language Name', 'punctual-translation' ),
+					'separate_items_with_commas' => null,
+					'add_or_remove_items'        => null,
+					'choose_from_most_used'      => null,
+				],
+				'query_var'             => SPTRANS_TAXO,
+				'rewrite'               => false,
+				'public'                => false,
+				'show_ui'               => true,
+			]
+		);
 	}
 
 	/**
@@ -116,7 +123,7 @@ class PunctualTranslation_Client {
 	 * @return array
 	 * @author Amaury Balmer
 	 */
-	function updateMessages( array $messages ) {
+	public function updateMessages( array $messages ) {
 		global $post, $post_ID;
 
 		$current_terms     = wp_get_object_terms( $post_ID, SPTRANS_TAXO, [ 'fields' => 'slug' ] );
@@ -132,9 +139,12 @@ class PunctualTranslation_Client {
 			6  => sprintf( __( 'Translation published. <a href="%s">View translation</a>', 'punctual-translation' ), esc_url( get_translation_permalink( $post_ID, $current_term_slug ) ) ),
 			7  => __( 'Translation saved.', 'punctual-translation' ),
 			8  => sprintf( __( 'Translation submitted. <a target="_blank" href="%s">Preview translation</a>', 'punctual-translation' ), esc_url( add_query_arg( 'preview', 'true', get_translation_permalink( $post_ID, $current_term_slug ) ) ) ),
-			9  => sprintf( __( 'Translation scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview translation</a>', 'punctual-translation' ),
+			9  => sprintf(
+				__( 'Translation scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview translation</a>', 'punctual-translation' ),
 				// translators: Publish box date format, see http://php.net/date
-				date_i18n( __( 'j F Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_translation_permalink( $post_ID, $current_term_slug ) ) ),
+				date_i18n( __( 'j F Y @ G:i' ), strtotime( $post->post_date ) ),
+				esc_url( get_translation_permalink( $post_ID, $current_term_slug ) )
+			),
 			10 => sprintf( __( 'Translation draft updated. <a target="_blank" href="%s">Preview translation</a>', 'punctual-translation' ), esc_url( add_query_arg( 'preview', 'true', get_translation_permalink( $post_ID, $current_term_slug ) ) ) ),
 		];
 
@@ -149,7 +159,7 @@ class PunctualTranslation_Client {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function createRewriteRules( $wp_rewrite ) {
+	public function createRewriteRules( $wp_rewrite ) {
 		$base_rules = $wp_rewrite->rules;
 		foreach ( get_terms( SPTRANS_TAXO, [ 'hide_empty' => true ] ) as $term ) {
 			$new_rules = [];
@@ -174,7 +184,7 @@ class PunctualTranslation_Client {
 	 * @return array
 	 * @author Amaury Balmer
 	 */
-	function addQueryVar( $wpvar ) {
+	public function addQueryVar( $wpvar ) {
 		$wpvar[] = SPTRANS_QVAR;
 
 		return $wpvar;
@@ -188,7 +198,7 @@ class PunctualTranslation_Client {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function parseQuery( $query ) {
+	public function parseQuery( $query ) {
 		$query->is_translation = false;
 
 		if ( isset( $query->query_vars[ SPTRANS_QVAR ] ) && true === $query->is_singular ) {
@@ -215,7 +225,7 @@ class PunctualTranslation_Client {
 	 * @return array
 	 * @author Amaury Balmer
 	 */
-	function translateQueryPosts( $objects, $query ) {
+	public function translateQueryPosts( $objects, $query ) {
 		remove_filter( 'the_posts', [ $this, 'translateQueryPosts' ], 10 );
 
 		foreach ( $objects as $object ) {
@@ -239,7 +249,7 @@ class PunctualTranslation_Client {
 	 * @return object
 	 * @author Amaury Balmer
 	 */
-	function translateObject( $original, $translation ) {
+	public function translateObject( $original, $translation ) {
 		$translated = $original;
 
 		$translated->post_title   = $translation->post_title;
@@ -259,7 +269,7 @@ class PunctualTranslation_Client {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function getTranslateObject( $parent_id = 0, $language = '', $fields = 'object' ) {
+	public function getTranslateObject( $parent_id = 0, $language = '', $fields = 'object' ) {
 		global $wpdb;
 
 		// Get language term_id
@@ -269,7 +279,8 @@ class PunctualTranslation_Client {
 		}
 
 		// Get object_id translated
-		$object_id = $wpdb->get_var( "SELECT tr.object_id 
+		$object_id = $wpdb->get_var(
+			"SELECT tr.object_id 
 			FROM $wpdb->term_relationships AS tr 
 			INNER JOIN $wpdb->term_taxonomy AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id 
 			INNER JOIN $wpdb->posts AS p ON tr.object_id = p.ID 
@@ -277,7 +288,8 @@ class PunctualTranslation_Client {
 			AND tt.term_id = {$language->term_id}
 			AND p.post_parent = {$parent_id}
 			AND p.post_type = '" . SPTRANS_CPT . "'
-			LIMIT 1" );
+			LIMIT 1"
+		);
 
 		if ( false === $object_id ) {
 			return false;
@@ -300,24 +312,25 @@ class PunctualTranslation_Client {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function getTranslateObjects( $parent_id = 0, $fields = 'objects' ) {
+	public function getTranslateObjects( $parent_id = 0, $fields = 'objects' ) {
 		global $wpdb;
 
 		// Choose data to get
 		switch ( $fields ) {
-			case 'terms_objects' :
+			case 'terms_objects':
 				$fields = 't.*';
 				break;
-			case 'objects' :
+			case 'objects':
 				$fields = 'p.*, t.*';
 				break;
-			default :
-			case 'ids' :
+			default:
+			case 'ids':
 				$fields = 'p.ID, t.term_id';
 				break;
 		}
 
-		$objects = $wpdb->get_results( "SELECT {$fields}
+		$objects = $wpdb->get_results(
+			"SELECT {$fields}
 			FROM $wpdb->term_relationships AS tr 
 			INNER JOIN $wpdb->term_taxonomy AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id 
 			INNER JOIN $wpdb->terms AS t ON tt.term_id = t.term_id 
@@ -325,7 +338,8 @@ class PunctualTranslation_Client {
 			WHERE tt.taxonomy = '" . SPTRANS_TAXO . "'
 			AND p.post_parent = {$parent_id}
 			AND p.post_type = '" . SPTRANS_CPT . "'
-			AND p.post_status = 'publish'" );
+			AND p.post_status = 'publish'"
+		);
 
 		return $objects;
 	}
@@ -336,7 +350,7 @@ class PunctualTranslation_Client {
 	 * @return void
 	 * @author Amaury Balmer
 	 */
-	function determineAutoLanguages() {
+	public function determineAutoLanguages() {
 		$current_options = get_option( SPTRANS_OPTIONS_NAME );
 
 		// Auto add languages ?
@@ -364,7 +378,7 @@ class PunctualTranslation_Client {
 	 * @return string
 	 * @author Amaury Balmer
 	 */
-	function autoDisplayLanguages( $content = '' ) {
+	public function autoDisplayLanguages( $content = '' ) {
 		global $post;
 
 		$html = get_the_post_available_languages( '<p>' . __( 'Also available in : ', 'punctual-translation' ), ', ', '</p>' );

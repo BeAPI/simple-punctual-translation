@@ -64,10 +64,10 @@ function restore_original_language() {
 /**
  * Get the permalink for a translated version of a content
  *
- * @param int    $post
+ * @param int    $post_id
  * @param string $language_code
  *
- * @return void
+ * @return string
  * @author Amaury Balmer
  */
 function get_translation_permalink( $post_id, $language_code = '' ) {
@@ -93,7 +93,7 @@ function get_translation_permalink( $post_id, $language_code = '' ) {
  *
  * @param integer $object_id
  *
- * @return void
+ * @return string
  * @author Amaury Balmer
  */
 function get_post_available_languages( $object_id = 0 ) {
@@ -142,7 +142,7 @@ function get_the_post_available_languages( $before = '', $sep = ', ', $after = '
 		unset( $links[ $lang ] );
 	}
 
-	$links = apply_filters( "get_the_post_available_languages", $links );
+	$links = apply_filters( 'get_the_post_available_languages', $links );
 
 	return $before . join( $sep, $links ) . $after;
 }
