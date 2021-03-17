@@ -36,11 +36,15 @@ function PunctualTranslation_Install() {
 
 	// Administrator
 	$role = &get_role( 'administrator' );
-	PunctualTranslation_Translation_Cap( $role );
+	if ( ! empty( $role ) ) {
+		PunctualTranslation_Translation_Cap( $role );
+	}
 
 	// Editor
 	$role = &get_role( 'editor' );
-	PunctualTranslation_Translation_Cap( $role );
+	if ( ! empty( $role ) ) {
+		PunctualTranslation_Translation_Cap( $role );
+	}
 }
 
 /**
