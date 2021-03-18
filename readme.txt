@@ -87,6 +87,13 @@ The Simple Punctual Translation can be installed in 3 easy steps:
 
 == Changelog ==
 
+* Version 1.1.0 :
+	* Put all constructors on __construct
+	* Remove useless not working code
+	* Add quality tools
+	* Remove create_function
+	* Fix code style
+	* Fix some translation strings missing
 * Version 1.0.5 :
 	* Fix notice / sql error on 404 page
 * Version 1.0.4 :
