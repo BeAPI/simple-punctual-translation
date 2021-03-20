@@ -199,6 +199,11 @@ class PunctualTranslation_Client {
 	 * @author Amaury Balmer
 	 */
 	public function parseQuery( $query ) {
+
+		if ( is_admin() || defined( 'REST_REQUEST' ) || defined( 'WP_CLI' ) && WP_CLI ) {
+			return;
+		}
+
 		$query->is_translation = false;
 
 		if ( isset( $query->query_vars[ SPTRANS_QVAR ] ) && true === $query->is_singular ) {
