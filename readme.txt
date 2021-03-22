@@ -4,7 +4,7 @@ Donate link: http://beapi.fr/donate/
 Tags: administration, languages, traduction, translation, dropdown, i18n, language, localization, WPML, bilingual, switcher, multilingual, multilanguage, professional
 Requires at least: 3.0
 Tested up to: 3.1
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 
 A plugin for WordPress that allow to translate any post type in another languages. Translate only the single view.
 
@@ -87,6 +87,8 @@ The Simple Punctual Translation can be installed in 3 easy steps:
 
 == Changelog ==
 
+* Version 1.1.2 :
+	* Fix infinite redirect for rest API & WP-Cli
 * Version 1.1.1 :
 	* Fix error for not available roles
 * Version 1.1.0 :
