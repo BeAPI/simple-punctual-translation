@@ -263,12 +263,14 @@ class PunctualTranslation_Admin {
 					echo '<option selected="selected" value="' . esc_attr( $current_parent->ID ) . '">' . esc_html( $current_parent->ID ) . ' - ' . esc_html( $current_parent->post_title ) . '</option>' . "\n";
 				}
 
+				$current_options = get_option( SPTRANS_OPTIONS_NAME );
+
 				// List all other content
 				$q_all_content = new WP_Query(
 					[
-						'post_type'      => 'any',
+						'post_type'      => ! empty( $current_options['cpt'] ) ? $current_options['cpt'] : 'any',
 						'post_status'    => 'any',
-						'posts_per_page' => - 1,
+						'posts_per_page' => 2000,
 						'no_found_rows'  => true,
 						'post__not_in'   => [ $current_parent_id ],
 						'orderby'        => 'title',
