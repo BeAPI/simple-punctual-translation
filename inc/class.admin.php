@@ -266,10 +266,13 @@ class PunctualTranslation_Admin {
 				// List all other content
 				$q_all_content = new WP_Query(
 					[
-						'post_type'    => 'any',
-						'post_status'  => 'any',
-						'showposts'    => 500,
-						'post__not_in' => [ $current_parent_id ],
+						'post_type'      => 'any',
+						'post_status'    => 'any',
+						'posts_per_page' => - 1,
+						'no_found_rows'  => true,
+						'post__not_in'   => [ $current_parent_id ],
+						'orderby'        => 'title',
+						'order'          => 'ASC',
 					]
 				);
 				if ( $q_all_content->have_posts() ) {
@@ -365,9 +368,12 @@ class PunctualTranslation_Admin {
 		}
 		$q_all_content = new WP_Query(
 			[
-				'post_type'   => $_REQUEST['post_type'],
-				'post_status' => 'any',
-				'showposts'   => 500,
+				'post_type'      => $_REQUEST['post_type'],
+				'post_status'    => 'any',
+				'posts_per_page' => 1000,
+				'no_found_rows'  => true,
+				'orderby'        => 'title',
+				'order'          => 'ASC',
 			]
 		);
 		if ( $q_all_content->have_posts() ) {
@@ -389,6 +395,11 @@ class PunctualTranslation_Admin {
 			die();
 		}
 		$test_flag = false;
+
+		// Prevent current post without parent in translation dropdown
+		if ( null === $_REQUEST['parent_id'] || 0 === absint( $_REQUEST['parent_id'] ) ) {
+			die( 'ok' );
+		}
 
 		// Get translations for original content
 		$q_translations = new WP_Query(
