@@ -87,6 +87,8 @@ The Simple Punctual Translation can be installed in 3 easy steps:
 
 == Changelog ==
 
+* Version 1.1.4 :
+	* Fix wrong condition on save_post
 * Version 1.1.3 :
 	* Fix translate select dropdown query
 * Version 1.1.2 :
