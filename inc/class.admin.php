@@ -93,7 +93,7 @@ class PunctualTranslation_Admin {
 	 * @author Amaury Balmer
 	 */
 	public function saveDatasMetaBoxes( $object_id = 0 ) {
-		if ( ! isset( $_POST['_meta_translation'] ) || 'true' !== $_POST['_meta_translation'] ) {
+		if ( isset( $_POST['_meta_translation'] ) && 'true' === $_POST['_meta_translation'] ) {
 			return;
 		}
 
