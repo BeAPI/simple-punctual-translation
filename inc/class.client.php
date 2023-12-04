@@ -130,12 +130,14 @@ class PunctualTranslation_Client {
 		$current_term_slug = current( $current_terms );
 
 		$messages[ SPTRANS_CPT ] = [
-			0  => '', // Unused. Messages start at index 1.
+			0  => '',
+			// Unused. Messages start at index 1.
 			1  => sprintf( __( 'Translation updated. <a href="%s">View translation</a>', 'punctual-translation' ), esc_url( get_translation_permalink( $post_ID, $current_term_slug ) ) ),
 			2  => __( 'Custom field updated.', 'punctual-translation' ),
 			3  => __( 'Custom field deleted.', 'punctual-translation' ),
 			4  => __( 'Translation updated.', 'punctual-translation' ),
-			5  => isset( $_GET['revision'] ) ? sprintf( __( 'Translation restored to revision from %s', 'punctual-translation' ), wp_translation_revision_title( (int) $_GET['revision'], false ) ) : false, /* translators: %s: date and time of the revision */
+			5  => isset( $_GET['revision'] ) ? sprintf( __( 'Translation restored to revision from %s', 'punctual-translation' ), wp_translation_revision_title( (int) $_GET['revision'], false ) ) : false,
+			/* translators: %s: date and time of the revision */
 			6  => sprintf( __( 'Translation published. <a href="%s">View translation</a>', 'punctual-translation' ), esc_url( get_translation_permalink( $post_ID, $current_term_slug ) ) ),
 			7  => __( 'Translation saved.', 'punctual-translation' ),
 			8  => sprintf( __( 'Translation submitted. <a target="_blank" href="%s">Preview translation</a>', 'punctual-translation' ), esc_url( add_query_arg( 'preview', 'true', get_translation_permalink( $post_ID, $current_term_slug ) ) ) ),
@@ -293,8 +295,7 @@ class PunctualTranslation_Client {
 			AND tt.term_id = %d
 			AND p.post_parent = %d
 			AND p.post_type = %s
-			LIMIT 1"
-		), array( SPTRANS_TAXO, $language->term_id, $parent_id, SPTRANS_CPT ) );
+			LIMIT 1", SPTRANS_TAXO, $language->term_id, $parent_id, SPTRANS_CPT ) );
 
 		if ( false === $object_id ) {
 			return false;
@@ -343,8 +344,7 @@ class PunctualTranslation_Client {
 			WHERE tt.taxonomy = %s
 			AND p.post_parent = %d
 			AND p.post_type = %s
-			AND p.post_status = 'publish'"
-		), array( SPTRANS_TAXO, $parent_id, SPTRANS_CPT ) );
+			AND p.post_status = 'publish'", SPTRANS_TAXO, $parent_id, SPTRANS_CPT ) );
 
 		return $objects;
 	}
