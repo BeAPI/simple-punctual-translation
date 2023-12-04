@@ -64,8 +64,6 @@ These are mainly defects on the SEO aspect, and indeed on this first version of 
 
 ## Requirements
 
-**Required PHP5.**
-
 ## Installation
 
 The Simple Punctual Translation can be installed in 3 easy steps:
@@ -94,6 +92,11 @@ If you really like what we do or want to thank us for our quick work, feel free 
 
 ## Changelog
 
+* Version 1.1.5 :
+  * Allow to customize query_var and rewrite keyword
+  * Security, add some missing sanitizing
+  * Security, add some SQL preparing
+  * Fix some PHP compat 8+ bug
 * Version 1.1.4 :
   * Fix wrong condition on save_post
 * Version 1.1.3 :
