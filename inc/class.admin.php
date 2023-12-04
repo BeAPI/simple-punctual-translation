@@ -26,8 +26,8 @@ class PunctualTranslation_Admin {
 		add_filter( 'page_row_actions', [ $this, 'extendActionsList' ], 10, 2 );
 
 		// Ajax
-		add_action( 'wp_ajax_' . 'load_original_content', [ $this, 'ajaxBuildSelect' ] );
-		add_action( 'wp_ajax_' . 'test_once_translation', [ $this, 'ajaxTestUnicity' ] );
+		add_action( 'wp_ajax_load_original_content', [ $this, 'ajaxBuildSelect' ] );
+		add_action( 'wp_ajax_test_once_translation', [ $this, 'ajaxTestUnicity' ] );
 
 		// Rewriting
 		add_action( 'created_' . SPTRANS_TAXO, [ $this, 'resetRewritingRules' ] );
@@ -45,6 +45,8 @@ class PunctualTranslation_Admin {
 	 * @author Amaury Balmer
 	 */
 	public function fixPostparentQuickEdit( $post_ID, $post_after, $post_before ) {
+		global $wpdb;
+
 		if ( SPTRANS_CPT !== $post_before->post_type ) {
 			return;
 		}
@@ -71,8 +73,8 @@ class PunctualTranslation_Admin {
 			( 'post.php' === $hook_suffix && isset( $_GET['post'] ) && SPTRANS_CPT === $post->post_type ) ||
 			( 'edit.php' === $hook_suffix && SPTRANS_CPT === $_GET['post_type'] )
 		) {
-			wp_enqueue_style( 'admin-translation', SPTRANS_URL . '/ressources/admin.css', [], SPTRANS_VERSION, 'all' );
-			wp_enqueue_script( 'admin-translation', SPTRANS_URL . '/ressources/admin.js', [ 'jquery' ], SPTRANS_VERSION );
+			//wp_enqueue_style( 'admin-translation', SPTRANS_URL . '/ressources/admin.css', [], SPTRANS_VERSION, 'all' );
+			wp_enqueue_script( 'admin-translation', SPTRANS_URL . '/ressources/admin.js', [ 'jquery' ], SPTRANS_VERSION, true );
 			wp_localize_script(
 				'admin-translation',
 				'translationL10n',
@@ -161,7 +163,7 @@ class PunctualTranslation_Admin {
 		$current_term_id = current( $current_terms );
 
 		echo '<select name="language_translation" id="language_translation" class="widefat">' . "\n";
-		foreach ( get_terms( SPTRANS_TAXO, [ 'hide_empty' => false ] ) as $term ) {
+		foreach ( get_terms( [ 'taxonomy' => SPTRANS_TAXO, 'hide_empty' => false ] ) as $term ) {
 			echo '<option value="' . esc_attr( $term->term_id ) . '" ' . selected( $term->term_id, $current_term_id, false ) . '>' . esc_html( $term->name ) . '</option>' . "\n";
 		}
 		echo '</select>' . "\n";
@@ -331,7 +333,7 @@ class PunctualTranslation_Admin {
 					foreach ( $terms as $term ) {
 						$output[] = "<a href='edit-tags.php?action=edit&taxonomy=" . SPTRANS_TAXO . '&post_type=' . $translation->post_type . "&tag_ID=$term->term_id'> " . esc_html( sanitize_term_field( 'name', $term->name, $term->term_id, SPTRANS_TAXO, 'display' ) ) . '</a>';
 					}
-					echo join( ', ', $output );
+					echo implode( ', ', $output );
 				} else {
 					//_e('No term.','simple-case');
 				}
@@ -396,6 +398,7 @@ class PunctualTranslation_Admin {
 			status_header( '404' );
 			die();
 		}
+
 		$test_flag = false;
 
 		// Prevent current post without parent in translation dropdown
@@ -412,6 +415,7 @@ class PunctualTranslation_Admin {
 				'post__not_in' => [ (int) $_REQUEST['current_id'] ],
 			]
 		);
+
 		if ( $q_translations->have_posts() ) {
 			foreach ( $q_translations->posts as $translation ) { // Test language of theses translations
 				$language = get_the_terms( $translation->ID, SPTRANS_TAXO );

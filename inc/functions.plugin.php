@@ -21,7 +21,7 @@ function PunctualTranslation_Install() {
 	add_role( 'translator', __( 'Translator', 'punctual-translation' ) );
 
 	// Get the role and add the caps
-	$role = &get_role( 'translator' );
+	$role = get_role( 'translator' );
 	$role->add_cap( 'upload_files' );
 	$role->add_cap( 'read' );
 
@@ -35,13 +35,13 @@ function PunctualTranslation_Install() {
 	PunctualTranslation_Translation_Cap( $role );
 
 	// Administrator
-	$role = &get_role( 'administrator' );
+	$role = get_role( 'administrator' );
 	if ( ! empty( $role ) ) {
 		PunctualTranslation_Translation_Cap( $role );
 	}
 
 	// Editor
-	$role = &get_role( 'editor' );
+	$role = get_role( 'editor' );
 	if ( ! empty( $role ) ) {
 		PunctualTranslation_Translation_Cap( $role );
 	}

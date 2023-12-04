@@ -21,7 +21,9 @@ function switch_to_language( $language_slug = null ) {
 		$translation_flag = false;
 
 		return false;
-	} elseif ( empty( $language_slug ) && ! empty( $lang ) ) {
+	}
+
+	if ( empty( $language_slug ) && ! empty( $lang ) ) {
 		$language_slug = $lang;
 	}
 
@@ -77,7 +79,7 @@ function get_translation_permalink( $post_id, $language_code = '' ) {
 
 	$permalink       = get_option( 'permalink_structure' );
 	$current_options = get_option( SPTRANS_OPTIONS_NAME );
-	if ( '' != $permalink && $current_options['rewrite'] == 'rewrite' ) { // Rewriting enabled ?
+	if ( '' !== $permalink && 'rewrite' === $current_options['rewrite'] ) { // Rewriting enabled ?
 		$link = get_permalink( $post_id );
 		$link = str_replace( home_url( '/' ), '', $link );
 		$link = home_url( '/' ) . $language_code . '/' . $link;
@@ -131,7 +133,7 @@ function get_the_post_available_languages( $before = '', $sep = ', ', $after = '
 		if ( is_wp_error( $link ) ) {
 			return '';
 		}
-		$links[ $language->slug ] = '<a class="lang-' . $language->slug . '" href="' . $link . '" rel="alternate" hreflang="' . $language->slug . '">' . $language->name . '</a>';
+		$links[ $language->slug ] = '<a class="lang-' . $language->slug . '" href="' . esc_url( $link ) . '" rel="alternate" hreflang="' . esc_attr( $language->slug ) . '">' . esc_html( $language->name ) . '</a>';
 	}
 
 	// Add original lang if a lang is already load, and delete current lang display

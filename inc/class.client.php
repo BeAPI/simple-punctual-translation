@@ -161,14 +161,15 @@ class PunctualTranslation_Client {
 	 */
 	public function createRewriteRules( $wp_rewrite ) {
 		$base_rules = $wp_rewrite->rules;
-		foreach ( get_terms( SPTRANS_TAXO, [ 'hide_empty' => true ] ) as $term ) {
+
+		foreach ( get_terms( [ 'taxonomy' => SPTRANS_TAXO, 'hide_empty' => true ] ) as $term ) {
 			$new_rules = [];
 
 			// Prefix with term slug
 			foreach ( $base_rules as $key => $value ) {
 				$key = $term->slug . '/' . $key;
 
-				$new_rules[ $key ] = $value . '&lang=' . $term->slug;
+				$new_rules[ $key ] = $value . '&' . SPTRANS_QVAR . '=' . $term->slug;
 			}
 
 			// Merge with WP rules
@@ -199,8 +200,7 @@ class PunctualTranslation_Client {
 	 * @author Amaury Balmer
 	 */
 	public function parseQuery( $query ) {
-
-		if ( is_admin() || defined( 'REST_REQUEST' ) || defined( 'WP_CLI' ) && WP_CLI ) {
+		if ( is_admin() || defined( 'REST_REQUEST' ) || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
 			return;
 		}
 
@@ -209,7 +209,7 @@ class PunctualTranslation_Client {
 		if ( isset( $query->query_vars[ SPTRANS_QVAR ] ) && true === $query->is_singular ) {
 			$language = get_term_by( 'slug', $query->query_vars[ SPTRANS_QVAR ], SPTRANS_TAXO );
 			if ( false === $language ) {
-				wp_redirect( remove_query_arg( [ SPTRANS_QVAR ], stripslashes( $_SERVER['REQUEST_URI'] ) ) ); // TODO: manage case with rewriting method
+				wp_redirect( remove_query_arg( [ SPTRANS_QVAR ], stripslashes( $_SERVER['REQUEST_URI'] ) ), 302, 'Simple Punctual Translation' ); // TODO: manage case with rewriting method
 				exit();
 			}
 
@@ -271,7 +271,7 @@ class PunctualTranslation_Client {
 	 * @param string $language
 	 * @param string $fields
 	 *
-	 * @return void
+	 * @return false|integer|WP_Post
 	 * @author Amaury Balmer
 	 */
 	public function getTranslateObject( $parent_id = 0, $language = '', $fields = 'object' ) {
@@ -284,17 +284,17 @@ class PunctualTranslation_Client {
 		}
 
 		// Get object_id translated
-		$object_id = $wpdb->get_var(
+		$object_id = $wpdb->get_var( $wpdb->prepare(
 			"SELECT tr.object_id 
 			FROM $wpdb->term_relationships AS tr 
 			INNER JOIN $wpdb->term_taxonomy AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id 
 			INNER JOIN $wpdb->posts AS p ON tr.object_id = p.ID 
-			WHERE tt.taxonomy = '" . SPTRANS_TAXO . "'
-			AND tt.term_id = {$language->term_id}
-			AND p.post_parent = {$parent_id}
-			AND p.post_type = '" . SPTRANS_CPT . "'
+			WHERE tt.taxonomy = %s
+			AND tt.term_id = %d
+			AND p.post_parent = %d
+			AND p.post_type = %s
 			LIMIT 1"
-		);
+		), array( SPTRANS_TAXO, $language->term_id, $parent_id, SPTRANS_CPT ) );
 
 		if ( false === $object_id ) {
 			return false;
@@ -314,7 +314,7 @@ class PunctualTranslation_Client {
 	 * @param string $parent_id
 	 * @param string $fields
 	 *
-	 * @return void
+	 * @return array|false
 	 * @author Amaury Balmer
 	 */
 	public function getTranslateObjects( $parent_id = 0, $fields = 'objects' ) {
@@ -334,17 +334,17 @@ class PunctualTranslation_Client {
 				break;
 		}
 
-		$objects = $wpdb->get_results(
+		$objects = $wpdb->get_results( $wpdb->prepare(
 			"SELECT {$fields}
 			FROM $wpdb->term_relationships AS tr 
 			INNER JOIN $wpdb->term_taxonomy AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id 
 			INNER JOIN $wpdb->terms AS t ON tt.term_id = t.term_id 
 			INNER JOIN $wpdb->posts AS p ON tr.object_id = p.ID 
-			WHERE tt.taxonomy = '" . SPTRANS_TAXO . "'
-			AND p.post_parent = {$parent_id}
-			AND p.post_type = '" . SPTRANS_CPT . "'
+			WHERE tt.taxonomy = %s
+			AND p.post_parent = %d
+			AND p.post_type = %s
 			AND p.post_status = 'publish'"
-		);
+		), array( SPTRANS_TAXO, $parent_id, SPTRANS_CPT ) );
 
 		return $objects;
 	}

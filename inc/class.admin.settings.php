@@ -86,7 +86,7 @@ class PunctualTranslation_Admin_Settings {
 						<td>
 							<label style="display:block;">
 								<input type="radio" name="punctual-translation[rewrite]" value="classic" <?php checked( 'classic', $current_options['rewrite'] ); ?> />
-								<?php _e( 'Classic, adding "?lang=fr" for the URL.', 'punctual-translation' ); ?>
+								<?php _e( 'Classic, adding "?plang=fr" for the URL.', 'punctual-translation' ); ?>
 							</label>
 							<label style="display:block;">
 								<input type="radio" name="punctual-translation[rewrite]" value="rewrite" <?php checked( 'rewrite', $current_options['rewrite'] ); ?> />

@@ -3,7 +3,6 @@
 
     <description>A custom set of rules to check for a WPized WordPress project</description>
 
-
     <!-- Exclude the Node Modules directory. -->
     <exclude-pattern>/vendor/*</exclude-pattern>
 
@@ -23,6 +22,11 @@
 
         <!-- Exclude as we use the short array syntax over the long one. -->
         <exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+        <exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
+
+        <!-- Allow to use short ternary operators since they are very useful. -->
+        <exclude name="WordPress.PHP.DisallowShortTernary.Found"/>
+        <exclude name="Universal.Operators.DisallowShortTernary.Found"/>
     </rule>
 
     <!-- Only parse php files. -->
@@ -47,6 +51,8 @@
             <property name="text_domain" type="array" value="punctual-translation"/>
         </properties>
     </rule>
+
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
 
     <rule ref="PHPCompatibility"/>
     <config name="testVersion" value="7.2-"/>

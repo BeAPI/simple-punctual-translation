@@ -2,9 +2,9 @@
 Contributors: momo360modena
 Donate link: http://beapi.fr/donate/
 Tags: administration, languages, traduction, translation, dropdown, i18n, language, localization, WPML, bilingual, switcher, multilingual, multilanguage, professional
-Requires at least: 3.0
-Tested up to: 3.1
-Stable tag: 1.1.3
+Requires at least: 6.0
+Tested up to: 6.4
+Stable tag: 1.1.5
 
 A plugin for WordPress that allow to translate any post type in another languages. Translate only the single view.
 
@@ -68,8 +68,6 @@ These are mainly defects on the SEO aspect, and indeed on this first version of 
 
 == Installation ==
 
- **Required PHP5.**
-
 The Simple Punctual Translation can be installed in 3 easy steps:
 	
 1. Unzip "Simple Punctual Translations" archive and put all files into your "plugins" folder (/wp-content/plugins/) or to create a sub directory into the plugins folder (recommanded), like /wp-content/plugins/simple-punctual-translation/
@@ -87,6 +85,11 @@ The Simple Punctual Translation can be installed in 3 easy steps:
 
 == Changelog ==
 
+* Version 1.1.5 :
+    * Allow to customize query_var and rewrite keyword
+    * Security, add some missing sanitizing
+    * Security, add some SQL preparing
+    * Fix some PHP compat 8+ bug
 * Version 1.1.4 :
 	* Fix wrong condition on save_post
 * Version 1.1.3 :
