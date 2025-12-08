@@ -73,7 +73,13 @@ class PunctualTranslation_Admin {
 			( 'post.php' === $hook_suffix && isset( $_GET['post'] ) && SPTRANS_CPT === $post->post_type ) ||
 			( 'edit.php' === $hook_suffix && SPTRANS_CPT === $_GET['post_type'] )
 		) {
-			//wp_enqueue_style( 'admin-translation', SPTRANS_URL . '/ressources/admin.css', [], SPTRANS_VERSION, 'all' );
+
+			// Choices.js
+			// wp_enqueue_style( 'choices-js-base', SPTRANS_URL . '/ressources/vendors/choices.js@11.1.0/base.min.css', [], SPTRANS_VERSION, 'all' );
+			wp_enqueue_style( 'choices-js-choices', SPTRANS_URL . '/ressources/vendors/choices.js@11.1.0/choices.min.css', [], SPTRANS_VERSION, 'all' );
+			wp_enqueue_script( 'choices-js', SPTRANS_URL . '/ressources/vendors/choices.js@11.1.0/choices.min.js', [], SPTRANS_VERSION, true );
+
+			wp_enqueue_style( 'admin-translation', SPTRANS_URL . '/ressources/admin.css', [], SPTRANS_VERSION, 'all' );
 			wp_enqueue_script( 'admin-translation', SPTRANS_URL . '/ressources/admin.js', [ 'jquery' ], SPTRANS_VERSION, true );
 			wp_localize_script(
 				'admin-translation',
@@ -226,7 +232,7 @@ class PunctualTranslation_Admin {
 			$current_parent_id = $current_parent->ID;
 		}
 		?>
-		<div id="ajax-filter-original" class="hide-if-no-js">
+		<div id="ajax-filter-original" class="simple-punctual-translation-meta-box  hide-if-no-js">
 			<p>
 				<label for="original_post_type_js"><?php _e( 'Post types', 'punctual-translation' ); ?></label>
 				<br/>
@@ -258,7 +264,7 @@ class PunctualTranslation_Admin {
 			<label for="parent_id"><?php _e( 'Original', 'punctual-translation' ); ?></label>
 			<br/>
 			<select name="parent_id" id="parent_id" class="widefat">
-				<option value="-"><?php _e( 'Please choose a content', 'punctual-translation' ); ?></option>
+				<option value=""><?php _e( 'Please choose a content', 'punctual-translation' ); ?></option>
 				<?php
 				// Current selected value
 				if ( false !== $current_parent ) {
