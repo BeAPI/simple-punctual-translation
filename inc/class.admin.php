@@ -273,12 +273,13 @@ class PunctualTranslation_Admin {
 
 				$current_options = get_option( SPTRANS_OPTIONS_NAME );
 
-				// List all other content
+				// List initial content (limited for performance)
+				// The AJAX version will handle full search capabilities
 				$q_all_content = new WP_Query(
 					[
 						'post_type'      => ! empty( $current_options['cpt'] ) ? $current_options['cpt'] : 'any',
 						'post_status'    => 'any',
-						'posts_per_page' => 2000,
+						'posts_per_page' => 100,
 						'no_found_rows'  => true,
 						'post__not_in'   => [ $current_parent_id ],
 						'orderby'        => 'title',
@@ -290,6 +291,7 @@ class PunctualTranslation_Admin {
 						echo '<option value="' . esc_attr( $object->ID ) . '">' . esc_html( $object->ID ) . ' - ' . esc_html( $object->post_title ) . '</option>' . "\n";
 					}
 				}
+				wp_reset_postdata();
 				?>
 			</select>
 		</div>

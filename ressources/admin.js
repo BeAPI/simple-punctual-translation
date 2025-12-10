@@ -22,11 +22,15 @@ jQuery(document).ready(function () {
         checkUnicityTranslation(jQuery(this).val());
     });
 
+    // Store search timeout globally to avoid conflicts
+    let searchTimeout = null;
+
     function loadPostParentAjax(post_type, current_value) {
         jQuery("select#post_parent_js").load(ajaxurl, {
             'action': 'load_original_content',
             'post_type': post_type,
-            'current_value': current_value
+            'current_value': current_value,
+            'limit': 100
         }, function (response, status, xhr) {
             if (status == "error") {
                 alert("Sorry but an error occured with AJAX method");
@@ -35,12 +39,103 @@ jQuery(document).ready(function () {
                 if (translationSelect !== null) {
                     translationSelect.destroy();
                 }
+                
                 // Initialize Choices.js after options are loaded
-                translationSelect = new Choices(jQuery('#post_parent_js')[0], {
+                const selectElement = jQuery('#post_parent_js')[0];
+                translationSelect = new Choices(selectElement, {
                     searchEnabled: true,
                     itemSelectText: '',
+                    searchChoices: false, // Disable local search, we'll use AJAX
+                    shouldSort: true,
+                    shouldSortItems: true
                 });
+
+                // Wait for Choices.js to render, then attach search handler
+                setTimeout(function() {
+                    attachSearchHandler(post_type, current_value);
+                }, 100);
+
                 syncSelectParentBox();
+            }
+        });
+    }
+
+    function attachSearchHandler(post_type, current_value) {
+        // Find the search input in Choices.js
+        const choicesContainer = jQuery('#post_parent_js').closest('.choices');
+        const searchInput = choicesContainer.find('input[type="text"]');
+
+        // Remove any existing handlers
+        searchInput.off('input.ajaxSearch');
+
+        // Attach new search handler
+        searchInput.on('input.ajaxSearch', function() {
+            const searchTerm = jQuery(this).val().trim();
+            
+            // Clear previous timeout
+            if (searchTimeout) {
+                clearTimeout(searchTimeout);
+            }
+
+            // If search is cleared, reload initial list
+            if (searchTerm.length < 2) {
+                loadPostParentAjax(post_type, current_value);
+                return;
+            }
+
+            // Debounce search requests (wait 300ms after user stops typing)
+            searchTimeout = setTimeout(function() {
+                loadPostParentAjaxSearch(post_type, current_value, searchTerm);
+            }, 300);
+        });
+    }
+
+    function loadPostParentAjaxSearch(post_type, current_value, searchTerm) {
+        jQuery.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                'action': 'load_original_content',
+                'post_type': post_type,
+                'current_value': current_value,
+                'search': searchTerm,
+                'limit': 100
+            },
+            success: function(response) {
+                // Parse the response to get options
+                const tempSelect = jQuery('<select>').html(response);
+                const options = tempSelect.find('option');
+
+                // Destroy and recreate Choices instance with new options
+                if (translationSelect !== null) {
+                    translationSelect.destroy();
+                }
+
+                // Clear and repopulate select
+                const selectElement = jQuery('#post_parent_js')[0];
+                selectElement.innerHTML = '';
+                options.each(function() {
+                    selectElement.appendChild(this);
+                });
+
+                // Reinitialize Choices.js
+                translationSelect = new Choices(selectElement, {
+                    searchEnabled: true,
+                    itemSelectText: '',
+                    searchChoices: false,
+                    shouldSort: true,
+                    shouldSortItems: true
+                });
+
+                // Reattach search handler
+                setTimeout(function() {
+                    attachSearchHandler(post_type, current_value);
+                }, 100);
+
+                syncSelectParentBox();
+            },
+            error: function() {
+                alert("Sorry but an error occured with AJAX search method");
             }
         });
     }
