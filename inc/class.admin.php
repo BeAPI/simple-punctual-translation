@@ -85,8 +85,12 @@ class PunctualTranslation_Admin {
 				'admin-translation',
 				'translationL10n',
 				[
-					'successText' => __( 'This translation is unique, fine...', 'punctual-translation' ),
-					'errorText'   => __( 'Duplicate translation detected !', 'punctual-translation' ),
+					'successText'       => __( 'This translation is unique, fine...', 'punctual-translation' ),
+					'errorText'         => __( 'Duplicate translation detected !', 'punctual-translation' ),
+					'searchPlaceholder' => __( 'Search for an article...', 'punctual-translation' ),
+					'noResultsText'     => __( 'No results found', 'punctual-translation' ),
+					'searchingText'     => __( 'Searching...', 'punctual-translation' ),
+					'pleaseSearch'      => __( 'Please search for at least 2 characters', 'punctual-translation' ),
 				]
 			);
 		}
@@ -378,19 +382,39 @@ class PunctualTranslation_Admin {
 			status_header( '404' );
 			die();
 		}
-		$q_all_content = new WP_Query(
-			[
-				'post_type'      => $_REQUEST['post_type'],
-				'post_status'    => 'any',
-				'posts_per_page' => 1000,
-				'no_found_rows'  => true,
-				'orderby'        => 'title',
-				'order'          => 'ASC',
-			]
-		);
+
+		// Sanitize inputs
+		$post_type      = sanitize_text_field( wp_unslash( $_REQUEST['post_type'] ) );
+		$current_value   = isset( $_REQUEST['current_value'] ) ? absint( $_REQUEST['current_value'] ) : 0;
+		$search_term     = isset( $_REQUEST['search'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['search'] ) ) : '';
+		$load_selected_only = isset( $_REQUEST['load_selected_only'] ) && 'true' === $_REQUEST['load_selected_only'];
+		$limit           = isset( $_REQUEST['limit'] ) ? absint( $_REQUEST['limit'] ) : 100;
+
+		// Build query arguments
+		$query_args = [
+			'post_type'      => $post_type,
+			'post_status'    => 'any',
+			'posts_per_page' => $limit,
+			'no_found_rows'  => true,
+			'orderby'        => 'title',
+			'order'          => 'ASC',
+		];
+
+		// If loading only selected value, add post__in filter
+		if ( $load_selected_only && $current_value > 0 ) {
+			$query_args['post__in'] = [ $current_value ];
+		}
+
+		// If search term provided, add search filter
+		if ( ! empty( $search_term ) && strlen( $search_term ) >= 2 ) {
+			$query_args['s'] = $search_term;
+		}
+
+		$q_all_content = new WP_Query( $query_args );
+
 		if ( $q_all_content->have_posts() ) {
 			foreach ( $q_all_content->posts as $object ) {
-				echo '<option value="' . esc_attr( $object->ID ) . '" ' . selected( $object->ID, (int) $_REQUEST['current_value'], false ) . '>' . esc_html( $object->ID ) . ' - ' . esc_html( $object->post_title ) . '</option>' . "\n";
+				echo '<option value="' . esc_attr( $object->ID ) . '" ' . selected( $object->ID, $current_value, false ) . '>' . esc_html( $object->ID ) . ' - ' . esc_html( $object->post_title ) . '</option>' . "\n";
 			}
 		}
 	}

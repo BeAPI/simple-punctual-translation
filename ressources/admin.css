@@ -1,12 +1,23 @@
-.simple-punctual-translation-meta-box *{
+.simple-punctual-translation-meta-box * {
 	box-sizing: border-box;
 }
 
-.simple-punctual-translation-meta-box label{
+.simple-punctual-translation-meta-box label {
 	margin-bottom: 8px;
 }
 
-.simple-punctual-translation-meta-box .choices__inner{
+.simple-punctual-translation-meta-box .choices__inner {
 	background-color: transparent;
 	border : 1px solid #8c8f94 ;
+}
+
+.simple-punctual-translation-meta-box .choices__inner .choices__item {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+}
+
+.simple-punctual-translation-meta-box .choices__list--dropdown, .choices__list[aria-expanded] {
+	z-index: 2;
 }

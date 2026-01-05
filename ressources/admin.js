@@ -1,20 +1,182 @@
 jQuery(document).ready(function () {
-
-    // Choices.js instance - will be initialized after AJAX load
     let translationSelect = null;
+    let searchTimeout = null;
+    let currentPostType = null;
+    let currentValue = null;
+    let valueBeforeSearch = null; // Store the actual selected value before starting a search
+    const choicesOptions = {
+        searchEnabled: true,
+        searchResultLimit: -1,
+        noChoicesText: translationL10n.pleaseSearch || 'Saisissez au moins 2 caractères pour rechercher',
+        removeItemButton: true,
+        itemSelectText: '',
+        searchChoices: false, // Disable local search, we'll use AJAX
+        shouldSort: false,
+        shouldSortItems: false,
+        placeholder: true,
+        placeholderValue: translationL10n.searchPlaceholder || 'Rechercher un article...',
+        searchPlaceholderValue: translationL10n.searchPlaceholder || 'Rechercher un article...',
+        fuseOptions: {
+            threshold: 1.0 // Effectively disable Fuse.js search
+        }
+    }
 
-    // Listen change on select AJAX, and clone value on no-js select
-    // Todo, manage case if value not exist, from a DB change from AJAX and HTML values
-    jQuery('select#post_parent_js').on('change', function () {
-        syncSelectParentBox();
-    });
+    /**
+     * Sync the selected value from Choices.js to the hidden select used for form submission
+     */
+    function syncSelectParentBox() {
+        if (translationSelect === null) return;
+        
+        // Get value directly from the select element (most reliable)
+        const selectElement = jQuery('#post_parent_js')[0];
+        let selectedValue = '';
+        
+        if (selectElement) {
+            selectedValue = selectElement.value || '';
+        }
+        
+        // Update the hidden select used for form submission
+        jQuery("select#parent_id").val(selectedValue);
+        
+        checkUnicityTranslation(jQuery("select#language_translation").val());
+    }
+    
+    // Attach Choices.js native event handlers
+    function attachChoicesHandlers() {
+        if (translationSelect === null) return;
+        
+        const selectElement = jQuery('#post_parent_js')[0];
+        if (!selectElement) {
+            setTimeout(attachChoicesHandlers, 100);
+            return;
+        }
+        
+        // Listen to choice selection
+        selectElement.addEventListener('choice', function() {
+            // Update stored value when user actually selects something
+            const selectElement = jQuery('#post_parent_js')[0];
+            if (selectElement && selectElement.value) {
+                valueBeforeSearch = selectElement.value;
+            }
+            syncSelectParentBox();
+        });
+        
+        // Also listen to native change event as fallback
+        selectElement.addEventListener('change', function() {
+            // Update stored value when user actually selects something
+            const selectElement = jQuery('#post_parent_js')[0];
+            if (selectElement && selectElement.value) {
+                valueBeforeSearch = selectElement.value;
+            }
+            syncSelectParentBox();
+        });
+        
+        // Listen to dropdown open/close events (native Choices.js events)
+        selectElement.addEventListener('showDropdown', function() {
+            // Store the value when dropdown opens (before any search)
+            const selectElement = jQuery('#post_parent_js')[0];
+            valueBeforeSearch = selectElement && selectElement.value ? selectElement.value : null;
+            setTimeout(hideSelectedFromDropdown, 10);
+        });
+        
+        selectElement.addEventListener('hideDropdown', function() {
+            resetSearchOnClose();
+        });
+        
+        // Listen to search event (native Choices.js event)
+        selectElement.addEventListener('search', function(event) {
+            const searchTerm = event.detail.value.trim();
+            
+            if (searchTimeout) {
+                clearTimeout(searchTimeout);
+            }
 
-    // Load default content for post_parent_js select
-    loadPostParentAjax(jQuery('select#original_post_type_js').val(), jQuery('select#parent_id').val());
+            if (searchTerm.length < 2) {
+                return;
+            }
 
-    // Liste change on select post_type, for reload ajax content
+            searchTimeout = setTimeout(function() {
+                loadPostParentAjaxSearch(searchTerm);
+            }, 300);
+        });
+    }
+
+    // Get initial values - check both selects for compatibility
+    currentPostType = jQuery('select#original_post_type_js').val();
+    currentValue = jQuery('select#post_parent_js').val() || jQuery('select#parent_id').val();
+
+    /**
+     * Hide the currently selected option from the dropdown list
+     */
+    function hideSelectedFromDropdown() {
+        const choicesContainer = jQuery('#post_parent_js').closest('.choices');
+        if (choicesContainer.length === 0) return;
+        
+        const selectElement = jQuery('#post_parent_js')[0];
+        const currentSelected = selectElement.value;
+        
+        if (!currentSelected || currentSelected === '__searching__') return;
+        
+        choicesContainer.find('.choices__list--dropdown .choices__item').each(function() {
+            const item = jQuery(this);
+            const itemValue = item.attr('data-value');
+            if (itemValue === currentSelected) {
+                item.css('display', 'none');
+            }
+        });
+    }
+
+    /**
+     * Reset search when dropdown closes
+     */
+    function resetSearchOnClose() {
+        if (translationSelect === null) return;
+        
+        const selectElement = jQuery('#post_parent_js')[0];
+        
+        // Clear search input
+        const choicesContainer = jQuery('#post_parent_js').closest('.choices');
+        const searchInput = choicesContainer.find('.choices__input--cloned, .choices__input');
+        searchInput.val('');
+        
+        // Use the value that was selected BEFORE the search started, not the current value
+        // (which might be from search results or auto-selected)
+        if (valueBeforeSearch && valueBeforeSearch !== '__searching__' && valueBeforeSearch !== '') {
+            loadSelectedValueOnly(currentPostType, valueBeforeSearch);
+        } else {
+            // No selection - clear everything and reset to empty state
+            translationSelect.clearChoices();
+            if (selectElement) {
+                selectElement.value = '';
+            }
+            syncSelectParentBox();
+        }
+    }
+
+
+    // Initialize Choices.js with empty select (no default load)
+    initializeChoices();
+
+    // If a value is already selected, load only that option for retrocompatibility
+    if (currentValue && parseInt(currentValue) > 0) {
+        loadSelectedValueOnly(currentPostType, currentValue);
+    }
+
+    // Liste change on select post_type, reset and clear choices
     jQuery('select#original_post_type_js').on('change', function () {
-        loadPostParentAjax(jQuery(this).val(), 0);
+        currentPostType = jQuery(this).val();
+        currentValue = 0;
+        
+        // Clear and reset Choices
+        if (translationSelect !== null) {
+            translationSelect.destroy();
+            translationSelect = null;
+        }
+        
+        const selectElement = jQuery('#post_parent_js')[0];
+        selectElement.innerHTML = ''; // Choices.js will handle the placeholder natively
+        
+        initializeChoices();
     });
 
     // Ajax test for help usage on admin
@@ -22,117 +184,144 @@ jQuery(document).ready(function () {
         checkUnicityTranslation(jQuery(this).val());
     });
 
-    // Store search timeout globally to avoid conflicts
-    let searchTimeout = null;
+    /**
+     * Initialize Choices.js with empty select
+     */
+    function initializeChoices() {
+        const selectElement = jQuery('#post_parent_js')[0];
+        
+        if (!selectElement.innerHTML.trim() || selectElement.innerHTML === ' AJAX Values ') {
+            selectElement.innerHTML = '';
+        }
 
-    function loadPostParentAjax(post_type, current_value) {
-        jQuery("select#post_parent_js").load(ajaxurl, {
-            'action': 'load_original_content',
-            'post_type': post_type,
-            'current_value': current_value,
-            'limit': 100
-        }, function (response, status, xhr) {
-            if (status == "error") {
-                alert("Sorry but an error occured with AJAX method");
-            } else {
-                // Destroy previous Choices instance if exists
-                if (translationSelect !== null) {
-                    translationSelect.destroy();
-                }
-                
-                // Initialize Choices.js after options are loaded
-                const selectElement = jQuery('#post_parent_js')[0];
-                translationSelect = new Choices(selectElement, {
-                    searchEnabled: true,
-                    itemSelectText: '',
-                    searchChoices: false, // Disable local search, we'll use AJAX
-                    shouldSort: true,
-                    shouldSortItems: true
-                });
+        if (translationSelect !== null) {
+            translationSelect.destroy();
+        }
 
-                // Wait for Choices.js to render, then attach search handler
-                setTimeout(function() {
-                    attachSearchHandler(post_type, current_value);
-                }, 100);
-
-                syncSelectParentBox();
-            }
-        });
+        translationSelect = new Choices(selectElement, choicesOptions);
+        attachChoicesHandlers();
     }
 
-    function attachSearchHandler(post_type, current_value) {
-        // Find the search input in Choices.js
-        const choicesContainer = jQuery('#post_parent_js').closest('.choices');
-        const searchInput = choicesContainer.find('input[type="text"]');
 
-        // Remove any existing handlers
-        searchInput.off('input.ajaxSearch');
-
-        // Attach new search handler
-        searchInput.on('input.ajaxSearch', function() {
-            const searchTerm = jQuery(this).val().trim();
-            
-            // Clear previous timeout
-            if (searchTimeout) {
-                clearTimeout(searchTimeout);
-            }
-
-            // If search is cleared, reload initial list
-            if (searchTerm.length < 2) {
-                loadPostParentAjax(post_type, current_value);
-                return;
-            }
-
-            // Debounce search requests (wait 300ms after user stops typing)
-            searchTimeout = setTimeout(function() {
-                loadPostParentAjaxSearch(post_type, current_value, searchTerm);
-            }, 300);
-        });
-    }
-
-    function loadPostParentAjaxSearch(post_type, current_value, searchTerm) {
+    /**
+     * Load only the selected value for retrocompatibility
+     */
+    function loadSelectedValueOnly(post_type, selected_value) {
         jQuery.ajax({
             url: ajaxurl,
             type: 'POST',
             data: {
                 'action': 'load_original_content',
                 'post_type': post_type,
-                'current_value': current_value,
+                'current_value': selected_value,
+                'limit': 1,
+                'load_selected_only': true
+            },
+            success: function(response) {
+                const tempSelect = jQuery('<select>').html(response);
+                const options = tempSelect.find('option');
+
+                if (options.length > 0) {
+                    const selectedOption = options.first();
+                    const selectElement = jQuery('#post_parent_js')[0];
+                    selectElement.innerHTML = '';
+
+                    if (translationSelect !== null) {
+                        translationSelect.destroy();
+                    }
+
+                    translationSelect = new Choices(selectElement, choicesOptions);
+                    translationSelect.setChoices([
+                        {
+                            value: selected_value.toString(),
+                            label: selectedOption.text(),
+                            selected: true
+                        }
+                    ], 'value', 'label', false);
+                    
+                    setTimeout(function() {
+                        hideSelectedFromDropdown();
+                        attachChoicesHandlers();
+                        syncSelectParentBox();
+                    }, 100);
+                }
+            },
+            error: function() {
+                console.error('Error loading selected value');
+            }
+        });
+    }
+
+    /**
+     * Load posts via AJAX search
+     */
+    function loadPostParentAjaxSearch(searchTerm) {
+        if (!currentPostType) {
+            currentPostType = jQuery('select#original_post_type_js').val();
+        }
+        
+        if (!currentPostType) return;
+
+        // Use the value that was stored when dropdown opened (before search)
+        const currentSelectedValue = valueBeforeSearch;
+        
+        translationSelect.setChoices([
+            {
+                value: '__searching__',
+                label: translationL10n.searchingText || 'Recherche en cours...',
+                disabled: false
+            }
+        ], 'value', 'label', true);
+
+        jQuery.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                'action': 'load_original_content',
+                'post_type': currentPostType,
+                'current_value': currentValue || 0,
                 'search': searchTerm,
                 'limit': 100
             },
             success: function(response) {
-                // Parse the response to get options
                 const tempSelect = jQuery('<select>').html(response);
                 const options = tempSelect.find('option');
 
-                // Destroy and recreate Choices instance with new options
-                if (translationSelect !== null) {
-                    translationSelect.destroy();
+                if (options.length === 0) {
+                    translationSelect.setChoices([
+                        {
+                            value: '',
+                            label: translationL10n.noResultsText || 'Aucun résultat trouvé',
+                            disabled: true
+                        }
+                    ], 'value', 'label', true);
+                    return;
                 }
 
-                // Clear and repopulate select
-                const selectElement = jQuery('#post_parent_js')[0];
-                selectElement.innerHTML = '';
+                const choices = [];
                 options.each(function() {
-                    selectElement.appendChild(this);
+                    const optionValue = jQuery(this).attr('value');
+                    if (!optionValue || optionValue === currentSelectedValue) return;
+                    
+                    choices.push({
+                        value: optionValue,
+                        label: jQuery(this).text(),
+                        selected: false
+                    });
                 });
 
-                // Reinitialize Choices.js
-                translationSelect = new Choices(selectElement, {
-                    searchEnabled: true,
-                    itemSelectText: '',
-                    searchChoices: false,
-                    shouldSort: true,
-                    shouldSortItems: true
-                });
-
-                // Reattach search handler
+                translationSelect.setChoices(choices, 'value', 'label', true);
+                
+                if (currentSelectedValue && currentSelectedValue !== '__searching__' && currentSelectedValue !== '') {
+                    const selectElement = jQuery('#post_parent_js')[0];
+                    selectElement.value = currentSelectedValue.toString();
+                    translationSelect.setChoiceByValue(currentSelectedValue.toString());
+                    syncSelectParentBox();
+                }
+                
                 setTimeout(function() {
-                    attachSearchHandler(post_type, current_value);
+                    hideSelectedFromDropdown();
                 }, 100);
-
-                syncSelectParentBox();
             },
             error: function() {
                 alert("Sorry but an error occured with AJAX search method");
@@ -140,12 +329,6 @@ jQuery(document).ready(function () {
         });
     }
 });
-
-
-function syncSelectParentBox() {
-    jQuery("select#parent_id").val(jQuery("select#post_parent_js").val());
-    checkUnicityTranslation(jQuery("select#language_translation").val());
-}
 
 function checkUnicityTranslation(current_value) {
     jQuery.ajax({
