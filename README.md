@@ -93,7 +93,9 @@ If you really like what we do or want to thank us for our quick work, feel free 
 ## Changelog
 
 * Version 1.1.6 :
-  * Use Choices.js to enable search on select
+  * On editor load, query only the current post and not all posts, if one is selected.
+  * Replace big query (1000) posts by only 100 posts.
+  * Use Choices.js to enable search on select, load only searched posts.
 * Version 1.1.5 :
   * Allow to customize query_var and rewrite keyword
   * Security, add some missing sanitizing
