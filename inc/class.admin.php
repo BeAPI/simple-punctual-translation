@@ -75,7 +75,6 @@ class PunctualTranslation_Admin {
 		) {
 
 			// Choices.js
-			// wp_enqueue_style( 'choices-js-base', SPTRANS_URL . '/ressources/vendors/choices.js@11.1.0/base.min.css', [], SPTRANS_VERSION, 'all' );
 			wp_enqueue_style( 'choices-js-choices', SPTRANS_URL . '/ressources/vendors/choices.js@11.1.0/choices.min.css', [], SPTRANS_VERSION, 'all' );
 			wp_enqueue_script( 'choices-js', SPTRANS_URL . '/ressources/vendors/choices.js@11.1.0/choices.min.js', [], SPTRANS_VERSION, true );
 
