@@ -365,7 +365,7 @@ class PunctualTranslation_Admin {
 		$current_value   = isset( $_REQUEST['current_value'] ) ? absint( $_REQUEST['current_value'] ) : 0;
 		$search_term     = isset( $_REQUEST['search'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['search'] ) ) : '';
 		$load_selected_only = isset( $_REQUEST['load_selected_only'] ) && 'true' === $_REQUEST['load_selected_only'];
-		$limit           = isset( $_REQUEST['limit'] ) ? absint( $_REQUEST['limit'] ) : 100;
+		$limit           = isset( $_REQUEST['limit'] ) ? absint( $_REQUEST['limit'] ) : 1; // Limit to 1, the limit is overriden by the JS request.
 
 		// Build query arguments
 		$query_args = [
