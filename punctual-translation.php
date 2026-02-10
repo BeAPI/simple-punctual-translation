@@ -10,7 +10,7 @@ Author URI: http://www.beapi.fr
 Copyright 2023 - BeAPI Team (technique@beapi.fr)
 */
 
-define( 'SPTRANS_VERSION', '1.1.5' );
+define( 'SPTRANS_VERSION', '1.1.6' );
 define( 'SPTRANS_FOLDER', 'punctual-translation' );
 define( 'SPTRANS_OPTIONS_NAME', 'punctual-translation' ); // Option name for save settings
 
